@@ -1,11 +1,33 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Laravel Filterable](#laravel-filterable)
+  - [Installation](#installation)
+  - [Before we start](#before-we-start)
+    - [Custom filters](#custom-filters)
+    - [Generic filters](#generic-filters)
+      - [Default operator matrix for generic filters](#default-operator-matrix-for-generic-filters)
+  - [Usage](#usage)
+    - [Example with custom filters](#example-with-custom-filters)
+    - [Example with generic filters](#example-with-generic-filters)
+      - [Additional configuration](#additional-configuration)
+  - [Testing](#testing)
+  - [Changelog](#changelog)
+  - [Contributing](#contributing)
+  - [Security](#security)
+  - [Credits](#credits)
+  - [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Laravel Filterable
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/kyslik/laravel-filterable.svg?style=flat-square)](https://packagist.org/packages/kyslik/laravel-filterable)
 [![Build Status](https://img.shields.io/travis/kyslik/laravel-filterable/master.svg?style=flat-square)](https://travis-ci.org/kyslik/laravel-filterable)
 [![Total Downloads](https://img.shields.io/packagist/dt/kyslik/laravel-filterable.svg?style=flat-square)](https://packagist.org/packages/kyslik/laravel-filterable)
 
-This package allows you to easily handle database filtering through query strings. Idea is taken from one of [Jeffrey's videos (behind the paywall)](https://laracasts.com/series/eloquent-techniques/episodes/4).  
-One quick example might look like this: `/users?filter-username=~joe` will result in SQL query `select * from users where "username" like '%joe%'`.
+This package allows you to easily handle database filtering through query strings. Idea is taken from one of [Jeffrey's videos (behind the paywall)](https://laracasts.com/series/eloquent-techniques/episodes/4). One quick example might look like this: `/users?filter-username=~joe` will result in SQL query `select * from users where "username" like '%joe%'`.
 
 ## Installation
 
@@ -17,13 +39,13 @@ composer require kyslik/laravel-filterable
 
 Laravel will discover the package by itself. If you feel old-school disable auto-discovery and add `Kyslik\LaravelFilterable\FilterableServiceProvider::class` to the providers array in your `config/app.php`.
 
-## Before you start
+## Before we start
 
-Package lets you create & apply two kinds of filters **custom** and **generic**.
+Package lets us create & apply two kinds of filters **custom** and **generic**.
 
 ### Custom filters
 
-**Custom** filters are just like in Jeffrey's video. We define our logic on builder instance and package will apply it via local scope.  
+**Custom** filters are just like in Jeffrey's video. We define our logic on builder instance and package will apply it via [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes).  
 Lets say we want to display recently created records. We create method `recent($minutes = null)` inside our filter class, this method returns Builder instance:
 
 ```php
@@ -35,7 +57,7 @@ public function recent($minutes = null)
 }
 ```
 
-Full example is shown later on.
+Full example is shown [later on](https://github.com/Kyslik/laravel-filterable#example-with-generic-filters).
 
 ### Generic filters
 
@@ -82,11 +104,11 @@ Full example is shown later on.
 
 While using both **custom** or **generic** filters we must:
 
-1. have local scope on model with signature `scopeFilter(Builder $query, NAMEFilters $filters)`
-2. have particular filter class that extends
+1. have [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes) on model with signature `scopeFilter(Builder $query, FILTERNAME $filters)`
+2. have particular (`FILTERNAME`) filter class that extends one of:
    - `Kyslik\LaravelFilterable\GenericFilterable` class - enables us to use both **custom** & **generic** filters
    - `Kyslik\LaravelFilterable\Filterable` class - enables us to use only custom filters
-3. call scope within controller
+3. call scope within a controller
 
 ### Example with custom filters
 
@@ -219,7 +241,7 @@ Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recen
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
-### Security
+## Security
 
 If you discover any security related issues, please email martin.kiesel@gmail.com instead of using the issue tracker.
 
