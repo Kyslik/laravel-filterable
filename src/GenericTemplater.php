@@ -55,7 +55,7 @@ class GenericTemplater
         $range = explode(',', $value);
 
         if (count($range) == 2) {
-            return array_sort(array_map([$this, 'timestamp'], $range));
+            return array_sort(array_map([$this, 'timestamp'], $range), null);
         }
 
         throw new InvalidArgumentException('Provide exactly two timestamps.');
@@ -85,7 +85,7 @@ class GenericTemplater
         }
 
         if (max($range) == min($range)) {
-            return array_sort(['0', max($range)]);
+            return array_sort(['0', max($range)], null);
         }
 
         return [min($range), max($range)];
