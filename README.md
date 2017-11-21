@@ -27,7 +27,7 @@
 [![Build Status](https://img.shields.io/travis/Kyslik/laravel-filterable/master.svg?style=flat-square)](https://travis-ci.org/Kyslik/laravel-filterable)
 [![Total Downloads](https://img.shields.io/packagist/dt/kyslik/laravel-filterable.svg?style=flat-square)](https://packagist.org/packages/kyslik/laravel-filterable)
 
-This package allows you to easily handle database filtering through query strings. Idea is taken from one of [Jeffrey's videos (behind the paywall)](https://laracasts.com/series/eloquent-techniques/episodes/4). One quick example might look like this: `/users?filter-username=~joe` will result in SQL query `select * from users where "username" like '%joe%'`.
+This package allows you to easily handle database filtering through query strings. The idea is taken from one of the [Jeffrey's videos (behind the paywall)](https://laracasts.com/series/eloquent-techniques/episodes/4). One quick example might look like this: `/users?filter-username=~joe` will result in SQL query `select * from users where "username" like '%joe%'`.
 
 ## Installation
 
@@ -37,16 +37,16 @@ You can install the package via composer:
 composer require kyslik/laravel-filterable
 ```
 
-Laravel will discover the package by itself. If you feel old-school disable auto-discovery and add `Kyslik\LaravelFilterable\FilterableServiceProvider::class` to the providers array in your `config/app.php`.
+Laravel will discover the package by itself. If you feel old-school, disable auto-discovery and add `Kyslik\LaravelFilterable\FilterableServiceProvider::class` to the providers array in your `config/app.php`.
 
 ## Before we start
 
-Package lets us create & apply two kinds of filters **custom** and **generic**.
+Package lets us create & apply two kinds of filters: **custom** and **generic**.
 
 ### Custom filters
 
 **Custom** filters are just like in Jeffrey's video. We define our logic on builder instance and package will apply it via [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes).  
-Lets say we want to display recently created records. We create method `recent($minutes = null)` inside our filter class, this method returns Builder instance:
+Let's say we want to display recently created records. We create method `recent($minutes = null)` inside our filter class, this method returns Builder instance:
 
 ```php
 public function recent($minutes = null)
@@ -61,7 +61,7 @@ Full example is shown [later on](https://github.com/Kyslik/laravel-filterable#ex
 
 ### Generic filters
 
-**Generic** filters are those defined in [config file](./config/filterable.php). Package supports by default filtering `timestamps`, `ranges`, `ins`, `booleans` and `strings`.
+**Generic** filters are those defined in [config file](./config/filterable.php). By default, the package supports filtering `timestamps`, `ranges`, `ins`, `booleans` and `strings`.
 
 ```
 /?filter-created_at=t>=1510952444
@@ -112,7 +112,7 @@ While using both **custom** or **generic** filters we must:
 
 ### Example with custom filters
 
-Lets say we want to use filterable on user model. We will have to create filter class `App/Filters/UserFilter.php`, specify `filterMap()` and method with our custom logic.
+Let's say we want to use filterable on user model. We will have to create filter class `App/Filters/UserFilter.php`, specify `filterMap()` and method with our custom logic.
 
 ```php
 <?php
@@ -136,9 +136,9 @@ class UserFilters extends Filterable
 }
 ```
 
->**Note**: `filterMap()` must be defined and it should return associative array where key is method name and value is either alias or array of aliases
+>**Note**: `filterMap()` must be defined and it should return associative array where **key** is method name and **value** is either alias or array of aliases
 
-Secondly we will have to add a [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes) to our user model:
+Secondly, we will have to add a [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes) to our user model:
 
 ```php
 class User extends Model 
@@ -151,12 +151,12 @@ class User extends Model
 }
 ```
 
-Finally in user controller we will have to call model's scope:
+Finally, in user controller we will have to call model's scope:
 
 ```php
 public function index(User $user, UserFilters $filters) 
 {
-	return $user->filter($filters)->paginate();
+    return $user->filter($filters)->paginate();
 }
 ```
 
@@ -164,7 +164,7 @@ Now we can visit `users?recent` or `users?recently` or `users?recent=25` and res
 
 ### Example with generic filters
 
-Lets say we want to use filterable on user model. We will have to create filter class `App/Filters/UserFilter.php` and specify `$filterables`.
+Let's say we want to use filterable on user model. We will have to create filter class `App/Filters/UserFilter.php` and specify `$filterables`.
 
 ```php
 <?php
@@ -178,7 +178,7 @@ class UserFilters extends GenericFilterable
 }
 ```
 
-Secondly we will have to add a [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes) to our user model:
+Secondly, we will have to add a [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes) to our user model:
 
 ```php
 class User extends Model 
@@ -191,7 +191,7 @@ class User extends Model
 }
 ```
 
-Finally in our user controller we will have to call model's scope:
+Finally, in our user controller we will have to call model's scope:
 
 ```php
 public function index(User $user, UserFilters $filters) 
@@ -200,9 +200,9 @@ public function index(User $user, UserFilters $filters)
 }
 ```
 
-We are ready to filter user model!
+We are ready to filter user model.
 
->**Note**: behind the scenes `GenericFilterable` class extends `Filterable` class thus, using **GenericFilterable** also enables us to apply custom filters defined within the filter class
+>**Note**: behind the scenes `GenericFilterable` class extends `Filterable` class, thus using **GenericFilterable** also enables us to apply custom filters defined within the filter class
 
 #### Additional configuration
 
