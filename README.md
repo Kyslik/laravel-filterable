@@ -146,7 +146,7 @@ use Kyslik\LaravelFilterable\FilterableTrait;
 ...
 class User extends Model 
 {
-	use FilterableTrait;
+    use FilterableTrait;
     ...
 }
 ```
@@ -186,7 +186,7 @@ use Kyslik\LaravelFilterable\FilterableTrait;
 ...
 class User extends Model 
 {
-	use FilterableTrait;
+    use FilterableTrait;
     ...
 }
 ```
