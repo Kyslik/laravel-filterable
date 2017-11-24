@@ -138,16 +138,16 @@ class UserFilters extends Filterable
 
 >**Note**: `filterMap()` must be defined and it should return associative array where key is method name and value is either alias or array of aliases
 
-Secondly we will have to add a [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes) to our user model:
+Secondly we will have to add a [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes) to our user model via [trait](https://github.com/Kyslik/laravel-filterable/blob/master/src/FilterableTrait.php):
 
 ```php
+use Kyslik\LaravelFilterable\FilterableTrait;
+
+...
 class User extends Model 
 {
+	use FilterableTrait;
     ...
-    public function scopeFilter(Builder $query, UserFilters $filters)
-    {
-        return $filters->apply($query);
-    }
 }
 ```
 
@@ -178,16 +178,16 @@ class UserFilters extends GenericFilterable
 }
 ```
 
-Secondly we will have to add a [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes) to our user model:
+Secondly we will have to add a [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes) to our user model via [trait](https://github.com/Kyslik/laravel-filterable/blob/master/src/FilterableTrait.php):
 
 ```php
+use Kyslik\LaravelFilterable\FilterableTrait;
+
+...
 class User extends Model 
 {
+	use FilterableTrait;
     ...
-    public function scopeFilter(Builder $query, UserFilters $filters)
-    {
-        return $filters->apply($query);
-    }
 }
 ```
 
