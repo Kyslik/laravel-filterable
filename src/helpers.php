@@ -12,6 +12,6 @@ if ( ! function_exists('remove_prefix')) {
      */
     function remove_prefix($prefix, $subject, $check = true)
     {
-        return ($check) ? str_replace_first($prefix, '', $subject) : substr($subject, strlen($prefix));
+        return $check ? str_replace_first($prefix, '', $subject) : substr($subject, strlen($prefix));
     }
 }
