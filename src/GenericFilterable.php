@@ -21,6 +21,11 @@ abstract class GenericFilterable extends Filterable
 
     /**
      * @var string
+     * */
+    protected $groupingOperator;
+
+    /**
+     * @var string
      */
     protected $prefix;
 
@@ -66,6 +71,7 @@ abstract class GenericFilterable extends Filterable
         $this->prefix            = config('filterable.prefix', 'filter-');
 
         $this->settings();
+        $this->determineGroupingOperator();
         $this->loadFilterTypes(config('filterable.filter_types', []));
     }
 
@@ -165,9 +171,9 @@ abstract class GenericFilterable extends Filterable
         $this->builderPresent();
 
         foreach ($this->determineGenericFilters() as $column => $filter) {
-            $this->builder =
-                ($filter['case'] == 'where') ? $this->builder->where($column, $filter['operator'], $filter['value']) :
-                    $this->builder->{$filter['case']}($column, $filter['value']);
+            $this->builder = ($filter['case'] == 'where') ?
+                $this->builder->where($column, $filter['operator'], $filter['value'], $this->groupingOperator) :
+                $this->builder->{$filter['case']}($column, $filter['value'], $this->groupingOperator);
         }
 
         return $this;
@@ -280,6 +286,16 @@ abstract class GenericFilterable extends Filterable
         }
 
         $filters[$column] = $filters[$column] ?? $prepareFilter($this->filterTypes[$this->defaultFilterType], $value);
+    }
+
+
+    private function determineGroupingOperator()
+    {
+        $this->groupingOperator = strtolower($this->request->get(config('filterable.uri_grouping_operator', 'grouping-operator'), null));
+
+        if (is_null($this->groupingOperator) or ! in_array($this->groupingOperator, ['and', 'or'], true)) {
+            $this->groupingOperator = config('filterable.default_grouping_operator', 'and');
+        }
     }
 
 

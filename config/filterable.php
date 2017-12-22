@@ -46,4 +46,10 @@ return [
 
     // Example: users?filter-id=>=1
     'prefix'       => 'filter-',
+
+    // When generating queries with multiple filters default_grouping_operator is used between the filters
+    // Example: filter-id=1&filter-name=Joe will result in where id = 1 'default_grouping_operator' where name = Joe
+    'default_grouping_operator' => 'and',
+
+    'uri_grouping_operator' => 'grouping-operator'
 ];
