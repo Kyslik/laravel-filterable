@@ -32,23 +32,22 @@ abstract class Filterable implements FilterableContract
     }
 
 
-    public function apply(Builder $builder)
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @throws \Exception
+     */
+    public function apply(Builder $builder): Builder
     {
         return $this->setBuilder($builder)->applyFilters()->getBuilder();
     }
 
 
     /**
-     * We define filterMap method and throw exception right away so user is alerted of the fact,
-     * that he needs to implement this method in his own code.
-     *
      * @return array ex: ['method-name', 'another-method' => 'alias', 'yet-another-method' => ['alias-one', 'alias-two]]
-     * @throws \Exception
      */
-    public function filterMap()
-    {
-        throw new \Exception('Method \'filterMap\' is missing on the object \''.__CLASS__.'\'.');
-    }
+    abstract public function filterMap(): array;
 
 
     /**
@@ -73,6 +72,9 @@ abstract class Filterable implements FilterableContract
     }
 
 
+    /**
+     * @throws \Kyslik\LaravelFilterable\Exceptions\MissingBuilderInstance
+     */
     protected function builderPresent()
     {
         if (empty($this->builder)) {
@@ -81,6 +83,11 @@ abstract class Filterable implements FilterableContract
     }
 
 
+    /**
+     * @return $this
+     * @throws \Kyslik\LaravelFilterable\Exceptions\MissingBuilderInstance
+     * @throws \Exception
+     */
     protected function applyFilters()
     {
         $this->builderPresent();
@@ -97,7 +104,7 @@ abstract class Filterable implements FilterableContract
     }
 
 
-    private function filters()
+    private function filters(): array
     {
         if (empty($this->filterMap)) {
             return [];
@@ -112,6 +119,6 @@ abstract class Filterable implements FilterableContract
             }
         }
 
-        return $filters;
+        return $filters ?? [];
     }
 }

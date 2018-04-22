@@ -3,6 +3,7 @@
 namespace Kyslik\LaravelFilterable\Exceptions;
 
 use Exception;
+use Illuminate\Http\Request;
 
 class InvalidSettingsException extends Exception
 {
@@ -12,9 +13,9 @@ class InvalidSettingsException extends Exception
      *
      * @param  \Illuminate\Http\Request
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|null
      */
-    public function render($request)
+    public function render(Request $request)
     {
         if ($request->wantsJson()) {
             return response()->json(['message' => $this->getMessage(), 'code' => 'not specified'], 400);

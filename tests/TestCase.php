@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Kyslik\LaravelFilterable\FilterableServiceProvider;
 use Kyslik\LaravelFilterable\GenericTemplater;
+use Kyslik\LaravelFilterable\Test\Stubs\UserFilter;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra

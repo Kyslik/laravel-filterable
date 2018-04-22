@@ -1,6 +1,6 @@
 <?php
 
-namespace Kyslik\LaravelFilterable\Test;
+namespace Kyslik\LaravelFilterable\Test\Stubs;
 
 use Kyslik\LaravelFilterable\GenericFilterable;
 

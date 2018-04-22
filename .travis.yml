@@ -5,18 +5,36 @@ php:
   - 7.1
   - 7.2
 
+git:
+  depth: 3
+
 env:
-  matrix:
-    - COMPOSER_FLAGS="--prefer-lowest"
-    - COMPOSER_FLAGS=""
+  - version=L5-5
+  - version=L5-6
+
 matrix:
   exclude:
-  - php: 7.2
-    env: COMPOSER_FLAGS="--prefer-lowest"
+  - php: 7.0
+    env: version=L5-6
 
-before_script:
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  - phpenv config-rm xdebug.ini
   - travis_retry composer self-update
-  - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-source
 
-script:
-  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+install:
+  - travis_retry composer install --no-interaction --prefer-dist --no-suggest;
+  - if [[ $version = 'L5-5' ]]; then travis_retry composer require --dev --update-with-dependencies --no-suggest --no-interaction orchestra/testbench:"3.5.*" phpunit/phpunit:"^6.0"; fi
+  - if [[ $version = 'L5-6' ]]; then travis_retry composer require --dev --update-with-dependencies --no-suggest --no-interaction orchestra/testbench:"3.6.*" phpunit/phpunit:"^7.0"; fi
+
+script: vendor/bin/phpunit
+
+branches:
+  only:
+    - master
+    - L5.5-6

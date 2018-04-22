@@ -84,15 +84,16 @@ abstract class GenericFilterable extends Filterable
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @throws \Kyslik\LaravelFilterable\Exceptions\MissingBuilderInstance
      */
-    public function apply(Builder $builder)
+    public function apply(Builder $builder): Builder
     {
         return $this->setBuilder($builder)->applyFilters()->applyGenericFilters()->getBuilder();
     }
 
 
-    public function filterMap()
+    public function filterMap(): array
     {
         return [];
     }
@@ -118,6 +119,7 @@ abstract class GenericFilterable extends Filterable
 
     protected function settings()
     {
+        //
     }
 
 
@@ -166,6 +168,10 @@ abstract class GenericFilterable extends Filterable
     }
 
 
+    /**
+     * @return $this
+     * @throws \Kyslik\LaravelFilterable\Exceptions\MissingBuilderInstance
+     */
     protected function applyGenericFilters()
     {
         $this->builderPresent();
@@ -199,7 +205,7 @@ abstract class GenericFilterable extends Filterable
      * @return bool
      * @throws \Kyslik\LaravelFilterable\Exceptions\InvalidSettingsException
      */
-    private function prepareSettings($filters, $type)
+    private function prepareSettings($filters, $type): bool
     {
         if (empty($filters)) {
             return false;
@@ -259,15 +265,19 @@ abstract class GenericFilterable extends Filterable
         $data = array_filter($data, 'strlen');
 
         // Clean up data and remove the prefix 'filter-' from keys.
-        $sanitizedData = [];
         foreach ($data as $key => $value) {
             $sanitizedData[remove_prefix($this->prefix, $key, false)] = $value;
         }
 
-        return $sanitizedData;
+        return $sanitizedData ?? [];
     }
 
 
+    /**
+     * @param $filters
+     * @param $column
+     * @param $value
+     */
     private function transformFilters(&$filters, $column, $value)
     {
         $prepareFilter = function ($type, $value) {
@@ -291,7 +301,8 @@ abstract class GenericFilterable extends Filterable
 
     private function determineGroupingOperator()
     {
-        $this->groupingOperator = strtolower($this->request->get(config('filterable.uri_grouping_operator', 'grouping-operator'), null));
+        $this->groupingOperator =
+            strtolower($this->request->get(config('filterable.uri_grouping_operator', 'grouping-operator'), null));
 
         if (is_null($this->groupingOperator) or ! in_array($this->groupingOperator, ['and', 'or'], true)) {
             $this->groupingOperator = config('filterable.default_grouping_operator', 'and');
