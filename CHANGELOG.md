@@ -8,7 +8,7 @@ All notable changes to `kyslik/laravel-filterable` will be documented in this fi
 - support for Laravel 5.6
 
 ### Changed
-- required PHP version to 7.1.*
+- requires PHP version `>=7.1`
 - signature of `filterMap` function
 
 ### Improved
