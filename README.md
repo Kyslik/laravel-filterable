@@ -1,26 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Laravel Filterable](#laravel-filterable)
-    - [Installation](#installation)
-    - [Introduction](#introduction)
-        - [Custom filters](#custom-filters)
-        - [Generic filters](#generic-filters)
-            - [Default operator matrix for generic filters](#default-operator-matrix-for-generic-filters)
-    - [Usage](#usage)
-        - [Example with custom filters](#example-with-custom-filters)
-        - [Example with generic filters](#example-with-generic-filters)
-            - [Additional configuration](#additional-configuration)
-    - [Testing](#testing)
-    - [Changelog](#changelog)
-    - [Contributing](#contributing)
-    - [Security](#security)
-    - [Credits](#credits)
-    - [License](#license)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Laravel Filterable
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/Kyslik/laravel-filterable.svg?style=flat-square)](https://packagist.org/packages/kyslik/laravel-filterable)
@@ -110,10 +87,10 @@ public function recent($minutes = null): \Illuminate\Database\Eloquent\Builder
 
 While using both **custom** or **generic** filters you must:
 
-1. have [local scope](https://laravel.com/docs/5.5/eloquent#local-scopes) on model with the signature `scopeFilter(Builder $query, FILTERNAME $filters)`
+1. have [local scope](https://laravel.com/docs/5.6/eloquent#local-scopes) on model with the signature `scopeFilter(Builder $query, FILTERNAME $filters)`
 2. have particular (`FILTERNAME`) filter class that extends one of:
-   - `Kyslik\LaravelFilterable\GenericFilterable` class - allows usage of both **custom** & **generic** filters
-   - `Kyslik\LaravelFilterable\Filterable` class - allows usage of only **custom** filters
+   - `Kyslik\LaravelFilterable\Generic\Filter` class - allows usage of both **custom** & **generic** filters
+   - `Kyslik\LaravelFilterable\Filter` class - allows usage of only **custom** filters
 3. call a scope within a controller
 
 ### Example with custom filters
@@ -124,9 +101,9 @@ Let's say you want to use filterable on `User` model. You will have to create th
 <?php
 namespace App\Filters;
 
-use Kyslik\LaravelFilterable\Filterable;
+use Kyslik\LaravelFilterable\Filter;
 
-class UserFilter extends Filterable
+class UserFilter extends Filter
 {
     public function filterMap(): array
     {
@@ -144,15 +121,15 @@ class UserFilter extends Filterable
 
 >**Note**: `filterMap()` shall return an associative array where **key** is a method name and **value** is either alias or array of aliases
 
-Now add a [local scope](https://laravel.com/docs/5.6/eloquent#local-scopes) to the `User` model via [FilterableTrait](https://github.com/Kyslik/laravel-filterable/blob/master/src/FilterableTrait.php):
+Now add a [local scope](https://laravel.com/docs/5.6/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
 
 ```php
-use Kyslik\LaravelFilterable\FilterableTrait;
+use Kyslik\LaravelFilterable\Filterable;
 
 ...
 class User extends Model
 {
-    use FilterableTrait;
+    use Filterable;
     ...
 }
 ```
@@ -178,23 +155,23 @@ Let's say you want to use generic filters on `User` model. You will have to crea
 <?php
 namespace App\Filters;
 
-use Kyslik\LaravelFilterable\GenericFilterable;
+use Kyslik\LaravelFilterable\Generic\Filter;
 
-class UserFilter extends GenericFilterable
+class UserFilter extends Filter
 {
     protected $filterables = ['id', 'username', 'email', 'created_at', 'updated_at'];
 }
 ```
 
-Next, you will have to add a [local scope](https://laravel.com/docs/5.6/eloquent#local-scopes) to the `User` model via [FilterableTrait](https://github.com/Kyslik/laravel-filterable/blob/master/src/FilterableTrait.php):
+Next, you will have to add a [local scope](https://laravel.com/docs/5.6/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
 
 ```php
-use Kyslik\LaravelFilterable\FilterableTrait;
+use Kyslik\LaravelFilterable\Filterable;
 
 ...
 class User extends Model
 {
-    use FilterableTrait;
+    use Filterable;
     ...
 }
 ```
@@ -212,15 +189,16 @@ public function index(User $user, UserFilter $filters)
 
 Now you are ready to filter `User` model.
 
->**Note**: behind the scenes `GenericFilterable` class extends `Filterable` class, therefore using **GenericFilterable** also enables you to apply custom filters defined within the filter class
+>**Note**: behind the scenes `...\Generic\Filter` class extends `Filter` class, therefore using **`...\Generic\Filter`** also enables you to apply custom filters defined within the filter class
 
 #### Additional configuration
 
 While using generic filters you may define which generics should be allowed. Define `settings()` method in a filter class, see below:
 
 ```php
+use Kyslik\LaravelFilterable\Generic\Filter
 ...
-class UserFilters extends GenericFilterable
+class UserFilter extends Filter
 {
     protected $filterables = ['id', 'username', 'email', 'created_at', 'updated_at'];
 
