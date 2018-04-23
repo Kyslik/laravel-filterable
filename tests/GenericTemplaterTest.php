@@ -4,13 +4,13 @@ namespace Kyslik\LaravelFilterable\Test;
 
 use Carbon\Carbon;
 use Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException;
-use Kyslik\LaravelFilterable\GenericTemplater;
+use Kyslik\LaravelFilterable\Generic\Templater;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class GenericTemplaterTest extends Orchestra
 {
 
-    /** @var  $templater GenericTemplater */
+    /** @var  $templater Templater */
     protected $templater;
 
 
@@ -121,6 +121,6 @@ class GenericTemplaterTest extends Orchestra
     protected function setUp()
     {
         parent::setUp();
-        $this->templater = resolve(GenericTemplater::class);
+        $this->templater = resolve(Templater::class);
     }
 }

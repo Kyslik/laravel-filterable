@@ -1,11 +1,11 @@
 <?php
 
-namespace Kyslik\LaravelFilterable;
+namespace Kyslik\LaravelFilterable\Generic;
 
 use Illuminate\Support\Carbon;
 use Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException;
 
-class GenericTemplater
+class Templater
 {
 
     /** @var \Carbon\Carbon $carbon */
@@ -40,16 +40,28 @@ class GenericTemplater
     }
 
 
+    /**
+     * @param $value
+     *
+     * @return string
+     * @throws \Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException
+     */
     protected function timestamp($value)
     {
         try {
             return $this->carbon->timestamp($value)->toDateTimeString();
-        } catch (\ErrorException $exception) {
+        } catch (\Exception $exception) {
             throw new InvalidArgumentException('Provided timestamp \''.$value.'\' appears to be invalid.');
         }
     }
 
 
+    /**
+     * @param $value
+     *
+     * @return array
+     * @throws \Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException
+     */
     protected function timestampRange($value)
     {
         $range = explode(',', $value);
@@ -65,15 +77,21 @@ class GenericTemplater
     protected function boolean($value)
     {
         if ($value == '1' || $value == 'true' || $value == 'yes') {
-            return (int) true;
+            return (int)true;
         } elseif ($value == '0' || $value == 'false' || $value == 'no') {
-            return (int) false;
+            return (int)false;
         }
 
         return null;
     }
 
 
+    /**
+     * @param $value
+     *
+     * @return array
+     * @throws \Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException
+     */
     protected function range($value)
     {
         $range = explode(',', $value);

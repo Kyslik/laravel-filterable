@@ -3,7 +3,7 @@
 namespace Kyslik\LaravelFilterable\Test;
 
 use Kyslik\LaravelFilterable\Exceptions\InvalidSettingsException;
-use Kyslik\LaravelFilterable\GenericFilterable;
+use Kyslik\LaravelFilterable\Generic\Filter;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class SettingsTest extends Orchestra
@@ -58,7 +58,7 @@ class SettingsTest extends Orchestra
 
 }
 
-class FilterOnly extends GenericFilterable
+class FilterOnly extends Filter
 {
 
     protected function settings()
@@ -69,7 +69,7 @@ class FilterOnly extends GenericFilterable
     }
 }
 
-class FilterOnlyDefault extends GenericFilterable
+class FilterOnlyDefault extends Filter
 {
 
     protected function settings()
@@ -79,7 +79,7 @@ class FilterOnlyDefault extends GenericFilterable
     }
 }
 
-class FilterColumnSpecificOnly extends GenericFilterable
+class FilterColumnSpecificOnly extends Filter
 {
 
     protected $filterables = ['id'];
@@ -91,7 +91,7 @@ class FilterColumnSpecificOnly extends GenericFilterable
     }
 }
 
-class FilterExcept extends GenericFilterable
+class FilterExcept extends Filter
 {
 
     protected function settings()
@@ -102,7 +102,7 @@ class FilterExcept extends GenericFilterable
     }
 }
 
-class FilterExceptDefault extends GenericFilterable
+class FilterExceptDefault extends Filter
 {
 
     protected function settings()
@@ -112,7 +112,7 @@ class FilterExceptDefault extends GenericFilterable
     }
 }
 
-class FilterColumnSpecificExcept extends GenericFilterable
+class FilterColumnSpecificExcept extends Filter
 {
 
     protected $filterables = ['id'];

@@ -2,12 +2,21 @@
 
 namespace Kyslik\LaravelFilterable\Test\Stubs;
 
-use Kyslik\LaravelFilterable\GenericFilterable;
+use Kyslik\LaravelFilterable\Generic\Filter;
 
-class UserFilter extends GenericFilterable
+class UserFilter extends Filter
 {
 
-    protected $filterables = ['id', 'username', 'email', 'created_at', 'updated_at', 'deleted_at', 'active', 'published'];
+    protected $filterables = [
+        'id',
+        'username',
+        'email',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'active',
+        'published',
+    ];
 
 
     /**Testing helper function.

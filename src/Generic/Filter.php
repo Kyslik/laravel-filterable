@@ -1,15 +1,16 @@
 <?php
 
-namespace Kyslik\LaravelFilterable;
+namespace Kyslik\LaravelFilterable\Generic;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Kyslik\LaravelFilterable\Exceptions\InvalidSettingsException;
+use Kyslik\LaravelFilterable\Filter as BaseFilter;
 
 /**
  * @property array chainedFor | Used internally in order to cheaply check if we are chaining.
  */
-abstract class GenericFilterable extends Filterable
+abstract class Filter extends BaseFilter
 {
 
     protected $filterables = [];
@@ -30,7 +31,7 @@ abstract class GenericFilterable extends Filterable
     protected $prefix;
 
     /**
-     * @var \Kyslik\LaravelFilterable\GenericTemplater
+     * @var \Kyslik\LaravelFilterable\Generic\Templater
      */
     private $templater;
 
@@ -58,10 +59,10 @@ abstract class GenericFilterable extends Filterable
     /**
      * We initialize
      *
-     * @param \Illuminate\Http\Request                   $request
-     * @param \Kyslik\LaravelFilterable\GenericTemplater $templater
+     * @param \Illuminate\Http\Request                    $request
+     * @param \Kyslik\LaravelFilterable\Generic\Templater $templater
      */
-    function __construct(Request $request, GenericTemplater $templater)
+    function __construct(Request $request, Templater $templater)
     {
         parent::__construct($request);
 
