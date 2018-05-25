@@ -25,13 +25,13 @@ Package lets you to create & apply two kinds of filters
 1. **custom**
 1. **generic**
 
-##Getting started
+## Getting started
 
 You can use the following command to create a new filter. 
 ```bash
 php artisan make:filter SomeFilter
 ```
-By default, this will create a new **Custom** filter in the **app/Filters** directory. To create a **Generic** filter just add the `--generic` (`-g`) flag to the command:
+This will create a new **Custom** filter in the **app/Filters** directory. To create a **Generic** filter just add the `--generic` (`-g`) flag to the command:
 ```bash
 php artisan make:filter SomeGenericFilter -g
 ```
