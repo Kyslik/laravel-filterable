@@ -25,6 +25,28 @@ Package lets you to create & apply two kinds of filters
 1. **custom**
 1. **generic**
 
+##Getting started
+
+You can use the following command to create a new filter. 
+```bash
+php artisan make:filter SomeFilter
+```
+By default, this will create a new **Custom** filter in the **app/Filters** directory. To create a **Generic** filter just add the `--generic` (`-g`) flag to the command:
+```bash
+php artisan make:filter SomeGenericFilter -g
+```
+Lastly, you can override the default namespace by changing the **namespace** config value e.g.
+
+**config/filterable.php**
+```php
+return [
+
+    'namespace' => 'Http\Filters',
+
+    ...
+];
+```
+
 ### Custom filters
 
 **Custom** filters are just like in Jeffrey's video. You define a logic on a builder instance and package applies it via [local scope](https://laravel.com/docs/5.6/eloquent#local-scopes).
@@ -186,6 +208,7 @@ public function index(User $user, UserFilter $filters)
     return $user->filter($filters)->paginate();
 }
 ```
+
 
 Now you are ready to filter `User` model.
 

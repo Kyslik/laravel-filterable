@@ -1,6 +1,9 @@
 <?php
 
 return [
+
+    'namespace' => 'Filters',
+
     // Default filter types
     // You may freely change operator keys '=', 't='... to suite your needs.
     'filter_types' => [

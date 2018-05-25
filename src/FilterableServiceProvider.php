@@ -15,6 +15,10 @@ class FilterableServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/filterable.php' => config_path('filterable.php'),
         ], 'config');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands(FilterMakeCommand::class);
+        }
     }
 
 

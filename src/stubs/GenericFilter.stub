@@ -1,0 +1,17 @@
+<?php
+
+namespace DummyNamespace;
+
+use Kyslik\LaravelFilterable\Generic\Filter;
+
+class DummyClass extends Filter
+{
+    /**
+     * Available Filters and their aliases.
+     *
+     * @return array ex: ['method-name', 'another-method' => 'alias', 'yet-another-method' => ['alias-one', 'alias-two]]
+     */
+    function filterMap(): array
+    {
+        return [];
+    }}
