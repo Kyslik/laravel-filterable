@@ -2,11 +2,11 @@
 
 return [
 
-    'namespace' => 'Filters',
+    'namespace'                 => 'Filters',
 
     // Default filter types
     // You may freely change operator keys '=', 't='... to suite your needs.
-    'filter_types' => [
+    'filter_types'              => [
         // accepts UNIX timestamp
         'timestamp' => [
             't!><' => ['case' => 'whereNotBetween', 'operator' => null, 'template' => 'timestamp-range'],
@@ -45,14 +45,14 @@ return [
 
     // In case package does not match any of filters above it'll use '=' filter type.
     // This configuration can be overridden per filter.
-    'default_type' => '=',
+    'default_type'              => '=',
 
     // Example: users?filter-id=>=1
-    'prefix'       => 'filter-',
+    'prefix'                    => 'filter-',
 
     // When generating queries with multiple filters default_grouping_operator is used between the filters
     // Example: filter-id=1&filter-name=Joe will result in where id = 1 'default_grouping_operator' where name = Joe
     'default_grouping_operator' => 'and',
 
-    'uri_grouping_operator' => 'grouping-operator'
+    'uri_grouping_operator' => 'grouping-operator',
 ];

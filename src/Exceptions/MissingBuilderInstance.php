@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kyslik
- * Date: 04/11/17
- * Time: 9:02 PM
- */
+
 
 namespace Kyslik\LaravelFilterable\Exceptions;
 
