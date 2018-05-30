@@ -20,32 +20,10 @@ You may continue by publishing [configuration](./config/filterable.php) by issui
 
 ## Introduction
 
-Package lets you to create & apply two kinds of filters
+Package lets you to create && apply two kinds of filters
 
 1. **custom**
 1. **generic**
-
-## Getting started
-
-You can use the following command to create a new filter. 
-```bash
-php artisan make:filter SomeFilter
-```
-This will create a new **Custom** filter in the **app/Filters** directory. To create a **Generic** filter just add the `--generic` (`-g`) flag to the command:
-```bash
-php artisan make:filter SomeGenericFilter -g
-```
-Lastly, you can override the default namespace by changing the **namespace** config value e.g.
-
-**config/filterable.php**
-```php
-return [
-
-    'namespace' => 'Http\Filters',
-
-    ...
-];
-```
 
 ### Custom filters
 
@@ -114,6 +92,27 @@ While using both **custom** or **generic** filters you must:
    - `Kyslik\LaravelFilterable\Generic\Filter` class - allows usage of both **custom** & **generic** filters
    - `Kyslik\LaravelFilterable\Filter` class - allows usage of only **custom** filters
 3. call a scope within a controller
+
+#### make:filter command
+
+You can use the following command to create a new filter. 
+```bash
+php artisan make:filter SomeFilter
+```
+
+This will create a new **Custom** filter in the **app/Filters** directory. To create a **Generic** filter just add the `--generic` (`-g`) flag to the command:
+```bash
+php artisan make:filter SomeGenericFilter -g
+```
+Lastly, you can override the default namespace by changing the **namespace** config value e.g.
+
+**config/filterable.php**
+```php
+return [
+    'namespace' => 'Http\Filters',
+    ...
+];
+```
 
 ### Example with custom filters
 
