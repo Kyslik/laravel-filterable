@@ -7,12 +7,21 @@ use Kyslik\LaravelFilterable\Generic\Filter;
 class DummyClass extends Filter
 {
     /**
-     * Available Filters and their aliases.
+     * Defines columns that end-user may filter by.
      *
-     * @return array ex: ['method-name', 'another-method' => 'alias', 'yet-another-method' => ['alias-one', 'alias-two]]
+     * @var array
      */
-    function filterMap(): array
+    protected $filterables = ['id'];
+
+
+    /**
+     * Define allowed generics, and for which fields.
+     * Read more in the documentation https://github.com/Kyslik/laravel-filterable#additional-configuration
+     *
+     * @return void
+     */
+    protected function settings()
     {
-        return [];
-    }
+		//
+	}
 }

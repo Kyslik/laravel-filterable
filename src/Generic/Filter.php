@@ -118,6 +118,12 @@ abstract class Filter extends BaseFilter
     }
 
 
+    /**
+     * Define allowed generics, and for which fields.
+     * Read more in the documentation https://github.com/Kyslik/laravel-filterable#additional-configuration
+     *
+     * @return void
+     */
     protected function settings()
     {
         //
