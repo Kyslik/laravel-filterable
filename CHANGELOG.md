@@ -2,6 +2,16 @@
 
 All notable changes to `kyslik/laravel-filterable` will be documented in this file
 
+## 1.1.1 - 2018-05-30
+
+### Added
+
+- command `make:filter`
+
+### Improved
+
+- readme
+
 ## 1.1.0 - 2018-04-23
 
 ### Added
