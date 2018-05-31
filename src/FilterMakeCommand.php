@@ -75,7 +75,7 @@ class FilterMakeCommand extends GeneratorCommand
     protected function getOptions()
     {
         return [
-            ['generic', 'g', InputOption::VALUE_OPTIONAL, 'Indicates if the generated filter should be generic.'],
+            ['generic', 'g', InputOption::VALUE_NONE, 'Indicates if the generated filter should be generic.'],
         ];
     }
 }
