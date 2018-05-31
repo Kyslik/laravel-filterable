@@ -2,6 +2,12 @@
 
 All notable changes to `kyslik/laravel-filterable` will be documented in this file
 
+## 1.1.2 - 2018-05-31
+
+### Fixed
+
+- required option `-g` see https://github.com/Kyslik/laravel-filterable/pull/6
+
 ## 1.1.1 - 2018-05-30
 
 ### Added
@@ -22,7 +28,7 @@ All notable changes to `kyslik/laravel-filterable` will be documented in this fi
 
 - requires PHP version `>=7.1`
 - signature of `filterMap` function, removed abstract implementation
-- directory structure & namespacing of `Generic*`
+- directory structure & name-spacing of `Generic*`
 - renamed `Filterable` classes to `Filter`
 - renamed `FilterableTrait` trait to `Filterable`
 
