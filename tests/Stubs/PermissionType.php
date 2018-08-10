@@ -10,7 +10,7 @@ class PermissionFilter extends Filter
     protected $filterables = [
         'id',
         'permission_id',
-        'permission_type',
+        'type',
         'created_at',
         'updated_at',
         'deleted_at',
