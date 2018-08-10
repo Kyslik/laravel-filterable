@@ -27,4 +27,8 @@ class UserFilter extends Filter
     {
         return $this->groupingOperator;
     }
+
+    // public function role($role){
+    //     return $this->setJoin("roles","user.id","roles.user_id")->where("roles.role",$role);
+    // }
 }

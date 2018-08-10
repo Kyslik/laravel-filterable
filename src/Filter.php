@@ -24,6 +24,14 @@ abstract class Filter implements FilterContract
      */
     protected $filterMap;
 
+    /**
+     * @var array
+     */
+    protected $joins = [];
+    /**
+     * @return Filter
+     */
+
 
     public function __construct(Request $request)
     {
@@ -76,6 +84,38 @@ abstract class Filter implements FilterContract
         }
     }
 
+    /**
+     * @return Builder
+     */
+    public function setJoin($join,$key,$joinKey,$joinType = null)
+    {
+        if(in_array($join, $this->joins)){
+            return $this->builder;
+        }
+        array_push($this->joins,$join);
+        if($joinType == "left"){
+            return $this->builder->leftJoin($join,$key,$joinKey);
+        }else if($joinType == "right"){
+            return $this->builder->rightJoin($join,$key,$joinKey);
+        }
+        return $this->builder->join($join,$key,$joinKey);
+    }
+
+    /**
+     * @return Builder
+     */
+    public function setLeftJoin($join,$key,$joinKey)
+    {
+        return $this->setJoin($join,$key,$joinKey,"left");
+    }
+
+    /**
+     * @return Builder
+     */
+    public function setRightJoin($join,$key,$joinKey)
+    {
+        return $this->setJoin($join,$key,$joinKey,"right");
+    }
 
     /**
      * @return $this

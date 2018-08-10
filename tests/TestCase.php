@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Kyslik\LaravelFilterable\FilterableServiceProvider;
 use Kyslik\LaravelFilterable\Generic\Templater;
 use Kyslik\LaravelFilterable\Test\Stubs\UserFilter;
+use Kyslik\LaravelFilterable\Test\Stubs\RoleFilter;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -51,6 +52,14 @@ abstract class TestCase extends Orchestra
         $request = resolve(Request::class)->create('http://test.dev?'.$requestQuery);
 
         return new UserFilter($request, resolve(Templater::class));
+    }
+
+
+    protected function buildCustomFilter($requestQuery)
+    {
+        /** @var Request $request */
+        $request = resolve(Request::class)->create('http://test.dev?'.$requestQuery);
+        return new RoleFilter($request);
     }
 
 
