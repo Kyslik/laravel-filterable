@@ -24,14 +24,6 @@ abstract class Filter implements FilterContract
      */
     protected $filterMap;
 
-    /**
-     * @var array
-     */
-    protected $joins = [];
-    /**
-     * @return Filter
-     */
-
 
     public function __construct(Request $request)
     {
@@ -84,68 +76,6 @@ abstract class Filter implements FilterContract
         }
     }
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param String $join
-     * @param String $key
-     * @param String $joinKey
-     * @param String $joinType
-     *
-     * @return Filter
-     */
-    public function addJoin($join,$key,$joinKey,$joinType = null)
-    {
-        if(in_array($join, $this->joins)){
-            return $this;
-        }
-        array_push($this->joins,$join);
-        if($joinType == "left"){
-            $this->builder->leftJoin($join,$key,$joinKey);
-        }else if($joinType == "right"){
-            $this->builder->rightJoin($join,$key,$joinKey);
-        }else{
-            $this->builder->join($join,$key,$joinKey);
-        }
-        return $this;
-    }
-
-    /**
-     * @param String $join
-     * @param String $key
-     * @param String $joinKey
-     * @param String $joinType
-     *
-     * @return Builder
-     */
-    public function setJoin($join,$key,$joinKey,$joinType = null)
-    {
-        $this->addJoin($join,$key,$joinKey,$joinType);
-        return $this->builder;
-    }
-
-    /**
-     * @param String $join
-     * @param String $key
-     * @param String $joinKey
-     *
-     * @return Builder
-     */
-    public function setLeftJoin($join,$key,$joinKey)
-    {
-        return $this->setJoin($join,$key,$joinKey,"left");
-    }
-
-    /**
-     * @param String $join
-     * @param String $key
-     * @param String $joinKey
-     *
-     * @return Builder
-     */
-    public function setRightJoin($join,$key,$joinKey)
-    {
-        return $this->setJoin($join,$key,$joinKey,"right");
-    }
 
     /**
      * @return $this

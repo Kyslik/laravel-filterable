@@ -2,6 +2,13 @@
 
 All notable changes to `kyslik/laravel-filterable` will be documented in this file
 
+## 1.1.3 - 2018-09-04
+
+### Added
+
+- support for **Laravel 5.7**
+- trait JoinSupport.php see [PR#9](https://github.com/Kyslik/laravel-filterable/pull/9) for more info
+
 ## 1.1.2 - 2018-05-31
 
 ### Fixed

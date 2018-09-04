@@ -4,7 +4,7 @@ namespace Kyslik\LaravelFilterable\Test\Stubs;
 
 use Kyslik\LaravelFilterable\Filter;
 
-class PermissionFilter extends Filter
+class Permission extends Filter
 {
 
     protected $filterables = [
@@ -18,10 +18,10 @@ class PermissionFilter extends Filter
         'published',
     ];
 
+
     function filterMap(): array
     {
-        return [
-        ];
+        return [];
     }
 
 }
