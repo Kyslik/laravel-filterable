@@ -226,8 +226,7 @@ abstract class Filter extends BaseFilter
                 }
                 // If $type exists for particular $filterable we append filters, otherwise we replace.
                 $this->for[$filterable] = (isset($this->for[$filterable][$type])) ?
-                    [$type => array_unique(array_merge($this->for[$filterable][$type], $filters))] :
-                    [$type => $filters];
+                    [$type => array_unique(array_merge($this->for[$filterable][$type], $filters))] : [$type => $filters];
             }
             unset($this->chainedFor);
         } else {

@@ -2,13 +2,13 @@
 
 namespace Kyslik\LaravelFilterable;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 class FilterMakeCommand extends GeneratorCommand
 {
+
     /**
      * The console command name.
      *
@@ -30,30 +30,6 @@ class FilterMakeCommand extends GeneratorCommand
      */
     protected $type = 'Filter';
 
-    /**
-     * Get the stub file for the generator.
-     *
-     * @return string
-     */
-    protected function getStub()
-    {
-        if ($this->option('generic')) {
-            return __DIR__ . '/stubs/GenericFilter.stub';
-        }
-
-        return __DIR__ . '/stubs/CustomFilter.stub';
-    }
-
-    /**
-     * Get the default namespace for the class.
-     *
-     * @param  string $rootNamespace
-     * @return string
-     */
-    protected function getDefaultNamespace($rootNamespace)
-    {
-        return $rootNamespace . '\\' . config('filterable.namespace', 'Filters');
-    }
 
     /**
      * Get the console command arguments.
@@ -67,6 +43,20 @@ class FilterMakeCommand extends GeneratorCommand
         ];
     }
 
+
+    /**
+     * Get the default namespace for the class.
+     *
+     * @param  string $rootNamespace
+     *
+     * @return string
+     */
+    protected function getDefaultNamespace($rootNamespace)
+    {
+        return $rootNamespace.'\\'.config('filterable.namespace', 'Filters');
+    }
+
+
     /**
      * Get the console command options.
      *
@@ -77,5 +67,20 @@ class FilterMakeCommand extends GeneratorCommand
         return [
             ['generic', 'g', InputOption::VALUE_NONE, 'Indicates if the generated filter should be generic.'],
         ];
+    }
+
+
+    /**
+     * Get the stub file for the generator.
+     *
+     * @return string
+     */
+    protected function getStub()
+    {
+        if ($this->option('generic')) {
+            return __DIR__.'/stubs/GenericFilter.stub';
+        }
+
+        return __DIR__.'/stubs/CustomFilter.stub';
     }
 }

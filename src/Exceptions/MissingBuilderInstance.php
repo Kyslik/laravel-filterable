@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Kyslik\LaravelFilterable\Exceptions;
 
 use Exception;
