@@ -3,7 +3,7 @@
 namespace Kyslik\LaravelFilterable\Test\Stubs;
 
 use Kyslik\LaravelFilterable\Filter;
-use Kyslik\LaravelFilterable\Generic\JoinSupport;
+use Kyslik\LaravelFilterable\JoinSupport;
 
 class RoleFilter extends Filter
 {

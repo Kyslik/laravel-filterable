@@ -1,6 +1,6 @@
 <?php
 
-namespace Kyslik\LaravelFilterable\Generic;
+namespace Kyslik\LaravelFilterable;
 
 trait JoinSupport
 {
@@ -15,7 +15,7 @@ trait JoinSupport
      * @param array $arguments
      *
      * @see \Illuminate\Database\Query\Builder::join()
-     * @return \Kyslik\LaravelFilterable\Filter|\Kyslik\LaravelFilterable\Generic\JoinSupport
+     * @return \Kyslik\LaravelFilterable\Filter|\Kyslik\LaravelFilterable\JoinSupport
      */
     public function addJoin(...$arguments)
     {
@@ -37,7 +37,7 @@ trait JoinSupport
      * @param array $arguments
      *
      * @see \Illuminate\Database\Query\Builder::leftJoin()
-     * @return \Kyslik\LaravelFilterable\Filter|\Kyslik\LaravelFilterable\Generic\JoinSupport
+     * @return \Kyslik\LaravelFilterable\Filter|\Kyslik\LaravelFilterable\JoinSupport
      */
     public function addLeftJoin(...$arguments)
     {
@@ -53,7 +53,7 @@ trait JoinSupport
      * @param array $arguments
      *
      * @see \Illuminate\Database\Query\Builder::rightJoin()
-     * @return \Kyslik\LaravelFilterable\Filter|\Kyslik\LaravelFilterable\Generic\JoinSupport
+     * @return \Kyslik\LaravelFilterable\Filter|\Kyslik\LaravelFilterable\JoinSupport
      */
     public function addRightJoin(...$arguments)
     {
