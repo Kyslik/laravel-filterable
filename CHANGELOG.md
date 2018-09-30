@@ -2,6 +2,24 @@
 
 All notable changes to `kyslik/laravel-filterable` will be documented in this file
 
+## 2.0.0 - 2018-10-01
+
+### Added
+
+- default filtering see [Additional features](https://github.com/Kyslik/laravel-filterable#additional-features) section
+
+### Changed
+
+- trait `JoinSupport` namespace moved up one level
+- signature of [`FilterContract`](https://github.com/Kyslik/laravel-filterable/blob/master/src/FilterContract.php)
+- dropped support for Laravel 5.5
+  - **reason**: while using default filtering; filter needs to `abort(redirect())`, which was introduced in Laravel 5.6
+  
+### Improved
+
+- test-suite
+- readme
+
 ## 1.1.3 - 2018-09-04
 
 ### Added

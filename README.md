@@ -20,14 +20,11 @@ You may continue by publishing [configuration](./config/filterable.php) by issui
 
 ## Introduction
 
-Package lets you to create && apply two kinds of filters
-
-1. **custom**
-1. **generic**
+Package lets you to create && apply two kinds of filters **custom** and **generic**.
 
 ### Custom filters
 
-**Custom** filters are just like in Jeffrey's video. You define a logic on a builder instance and package applies it via [local scope](https://laravel.com/docs/5.6/eloquent#local-scopes).
+**Custom** filters are just like in Jeffrey's video. You define a logic on a builder instance and package applies it via [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes).
 
 Let's say a product requires displaying recently created records. You create a method `recent($minutes = null)` inside a filter class, which returns Builder instance:
 
@@ -87,7 +84,7 @@ public function recent($minutes = null): \Illuminate\Database\Eloquent\Builder
 
 While using both **custom** or **generic** filters you must:
 
-1. have [local scope](https://laravel.com/docs/5.6/eloquent#local-scopes) on model with the signature `scopeFilter(Builder $query, FILTERNAME $filters)`
+1. have [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes) on model with the signature `scopeFilter(Builder $query, FILTERNAME $filters)`
 2. have particular (`FILTERNAME`) filter class that extends one of:
    - `Kyslik\LaravelFilterable\Generic\Filter` class - allows usage of both **custom** & **generic** filters
    - `Kyslik\LaravelFilterable\Filter` class - allows usage of only **custom** filters
@@ -116,7 +113,7 @@ return [
 
 ### Example with custom filters
 
-Let's say you want to use filterable on `User` model. You will have to create the filter class `App/Filters/UserFilter.php`, specify `filterMap()` and **filter** method (`recent(...)`) with the custom logic.
+Let's say you want to use filterable on `User` model. You will have to create the filter class `App/Filters/UserFilter.php` (`php artisan make:filter UserFilter`), specify `filterMap()` and **filter** method (`recent(...)`) with the custom logic.
 
 ```php
 <?php
@@ -142,7 +139,7 @@ class UserFilter extends Filter
 
 >**Note**: `filterMap()` shall return an associative array where **key** is a method name and **value** is either alias or array of aliases
 
-Now add a [local scope](https://laravel.com/docs/5.6/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
+Now add a [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
 
 ```php
 use Kyslik\LaravelFilterable\Filterable;
@@ -170,7 +167,7 @@ Now end-user can visit `users?recent` or `users?recently` or `users?recent=25` a
 
 ### Example with generic filters
 
-Let's say you want to use generic filters on `User` model. You will have to create filter class `App/Filters/UserFilter.php` and specify `$filterables` just like below:
+Let's say you want to use generic filters on `User` model. You will have to create filter class `App/Filters/UserFilter.php` (`php artisan make:filter UserFilter -g`) and specify `$filterables` just like below:
 
 ```php
 <?php
@@ -184,7 +181,7 @@ class UserFilter extends Filter
 }
 ```
 
-Next, you will have to add a [local scope](https://laravel.com/docs/5.6/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
+Next, you will have to add a [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
 
 ```php
 use Kyslik\LaravelFilterable\Filterable;
@@ -236,6 +233,36 @@ class UserFilter extends Filter
     }
 }
 ```
+
+### Additional features
+
+#### Default filtering
+
+In case you need to apply a filter when no filter is applied yet (determined by what query-string contains at the given request), you can use the following code in the controller:
+
+```php
+public function index(User $user, UserFilter $filter)
+{
+    // will redirect and "apply" the `recent` and `filter-id` filters 
+    // if not a single filter from UserFilter is applied
+    $filter->default(['recent' => now()->toDateTimeString(), 'filter-id' => '!=5']);
+
+    return $user->filter($filter)->paginate();
+}
+```
+
+End-user is going be redirected from `http://filters.test/users` to `http://filters.test/users?recent=2018-10-01 13:52:40&filter-id=!=5`. 
+In case the filter that you specify as *default* does not exist `Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException` is thrown.
+
+> **Caution**: be careful of **infinite redirects**
+
+You can read more about the feature in the [original issue #10](https://github.com/Kyslik/laravel-filterable/issues/10).
+
+#### JoinSupport for filters
+
+TBA
+
+You can read more about the feature in the [original PR #9](https://github.com/Kyslik/laravel-filterable/pull/9).
 
 ## Testing
 

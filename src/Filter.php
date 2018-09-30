@@ -3,7 +3,9 @@
 namespace Kyslik\LaravelFilterable;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
+use Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException;
 use Kyslik\LaravelFilterable\Exceptions\MissingBuilderInstance;
 
 abstract class Filter implements FilterContract
@@ -45,6 +47,33 @@ abstract class Filter implements FilterContract
 
 
     /**
+     * @inheritdoc
+     */
+    public function availableFilters(): array
+    {
+        return array_flatten($this->filterMap);
+    }
+
+
+    /**
+     * @param array $defaults
+     * @param int   $code
+     *
+     * @throws \Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException
+     */
+    public function default(array $defaults, int $code = 307)
+    {
+        if ($this->request->isMethod('GET') && ! empty($defaults) && ! $this->request->hasAnyFilter()) {
+            $appends = $this->appendableDefaults($defaults);
+
+            if ( ! empty($appends)) {
+                throw new HttpResponseException(redirect($this->request->fullUrlWithQuery($appends), $code));
+            }
+        }
+    }
+
+
+    /**
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getBuilder()
@@ -63,6 +92,29 @@ abstract class Filter implements FilterContract
         $this->builder = $builder;
 
         return $this;
+    }
+
+
+    /**
+     * @param array $defaults
+     *
+     * @return array
+     * @throws \Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException
+     */
+    protected function appendableDefaults(array $defaults): array
+    {
+        $appends  = [];
+        $filters  = $this->availableFilters();
+        $defaults = force_assoc_array($defaults, '');
+
+        foreach ($defaults as $filter => $default) {
+            if ( ! in_array($filter, $filters)) {
+                throw new InvalidArgumentException('Attempting to use default filter \''.$filter.'\', with no effect.');
+            }
+            $appends[$filter] = $default;
+        }
+
+        return $appends;
     }
 
 
@@ -91,7 +143,7 @@ abstract class Filter implements FilterContract
                 $this->builder = (is_null($value)) ? $this->$filter() : $this->$filter($value);
                 continue;
             }
-            throw new \Exception('Filter \''.$filter.'\' is declared in \'filterMap\', but it does not exist.');
+            throw new InvalidArgumentException('Filter \''.$filter.'\' is declared in \'filterMap\', but it does not exist.');
         }
 
         return $this;
@@ -107,7 +159,7 @@ abstract class Filter implements FilterContract
         foreach ($this->filterMap as $filter => $value) {
             $method = (is_string($filter)) ? $filter : $value;
 
-            // head([]) === false, we check if head returns false and remove that item from array
+            // head([]) === false, we check if head returns false and remove that item from array, I am sorry
             if (($filters[$method] = head($this->request->only($value))) === false) {
                 unset($filters[$method]);
             }

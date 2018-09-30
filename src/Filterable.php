@@ -9,12 +9,12 @@ trait Filterable
 
     /**
      * @param \Illuminate\Database\Eloquent\Builder    $query
-     * @param \Kyslik\LaravelFilterable\FilterContract $filters
+     * @param \Kyslik\LaravelFilterable\FilterContract $filter
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeFilter(Builder $query, FilterContract $filters)
+    public function scopeFilter(Builder $query, FilterContract $filter)
     {
-        return $filters->apply($query);
+        return $filter->apply($query);
     }
 }

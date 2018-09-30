@@ -3,6 +3,8 @@
 namespace Kyslik\LaravelFilterable\Test;
 
 use Carbon\Carbon;
+use Kyslik\LaravelFilterable\Test\Stubs\GenericFilter;
+use Kyslik\LaravelFilterable\Test\Stubs\UserFilter;
 
 class GenericFilterTest extends TestCase
 {
@@ -23,6 +25,26 @@ class GenericFilterTest extends TestCase
         config()->set('filterable.prefix', $this->prefix);
     }
 
+    function test_appendable_defaults_returns_correct_array()
+    {
+        $filter = $this->buildGenericFilter(GenericFilter::class);
+
+        $expected = ['name' => '', 'f-id' => '1'];
+        $this->assertEquals($expected, $filter->appendableDefaults(['name', 'f-id' => '1']));
+    }
+
+    function test_available_filters()
+    {
+        $filter = $this->buildGenericFilter(GenericFilter::class);
+        $this->assertEquals(['f-id', 'f-name', 'f-created_at', 'name'], $filter->availableFilters());
+    }
+
+    function test_filter_is_applied_once()
+    {
+        $filter = $this->buildGenericFilter(GenericFilter::class, 'name=one&name=neo&f-id=1&f-id=2');
+        $this->assertEquals('select * where "name" = \'neo\' and "id" = \'2\'', $this->dumpQuery($filter->apply($this->builder)));
+        $this->resetBuilder();
+    }
 
     function test_grouping_operator_is_determined()
     {
@@ -30,7 +52,7 @@ class GenericFilterTest extends TestCase
 
         $anonymous = function ($query, $expected, $default) {
             config()->set('filterable.default_grouping_operator', $default);
-            $filter = $this->buildFilter('grouping-operator='.$query);
+            $filter = $this->buildGenericFilter(UserFilter::class, 'grouping-operator='.$query);
             $this->assertEquals($filter->getGroupingOperator(), $expected);
         };
 
@@ -237,7 +259,7 @@ class GenericFilterTest extends TestCase
 
     function test_generic_filter_timestamp_equals()
     {
-        $now    = Carbon::now();
+        $now = Carbon::now();
 
         $this->assertQuery('select * where "created_at" = \''.$now->toDateTimeString().'\'', [
             $this->prefix.'created_at' => 't='.$now->timestamp,
@@ -247,7 +269,7 @@ class GenericFilterTest extends TestCase
 
     function test_generic_filter_timestamp_not_equals()
     {
-        $now    = Carbon::now();
+        $now = Carbon::now();
 
         $this->assertQuery('select * where "created_at" != \''.$now->toDateTimeString().'\'', [
             $this->prefix.'created_at' => 't!='.$now->timestamp,
@@ -257,7 +279,7 @@ class GenericFilterTest extends TestCase
 
     function test_generic_filter_timestamp_less_than()
     {
-        $now    = Carbon::now();
+        $now = Carbon::now();
         $this->assertQuery('select * where "created_at" > \''.$now->toDateTimeString().'\'', [
             $this->prefix.'created_at' => 't>'.$now->timestamp,
         ]);
@@ -266,7 +288,7 @@ class GenericFilterTest extends TestCase
 
     function test_generic_filter_timestamp_greater_than()
     {
-        $now    = Carbon::now();
+        $now = Carbon::now();
         $this->assertQuery('select * where "created_at" < \''.$now->toDateTimeString().'\'', [
             $this->prefix.'created_at' => 't<'.$now->timestamp,
         ]);
@@ -275,7 +297,7 @@ class GenericFilterTest extends TestCase
 
     function test_generic_filter_timestamp_equals_or_less_than()
     {
-        $now    = Carbon::now();
+        $now = Carbon::now();
         $this->assertQuery('select * where "created_at" >= \''.$now->toDateTimeString().'\'', [
             $this->prefix.'created_at' => 't>='.$now->timestamp,
         ]);
@@ -284,7 +306,7 @@ class GenericFilterTest extends TestCase
 
     function test_generic_filter_timestamp_equals_or_greater_than()
     {
-        $now    = Carbon::now();
+        $now = Carbon::now();
         $this->assertQuery('select * where "created_at" <= \''.$now->toDateTimeString().'\'', [
             $this->prefix.'created_at' => 't<='.$now->timestamp,
         ]);
@@ -293,37 +315,41 @@ class GenericFilterTest extends TestCase
 
     function test_generic_filter_timestamp_between()
     {
-        $now    = Carbon::now();
-        $then   = Carbon::now()->addDay();
+        $now  = Carbon::now();
+        $then = Carbon::now()->addDay();
 
-        $this->assertQuery('select * where "created_at" between \''.$now->toDateTimeString().'\' and \''.$then->toDateTimeString().'\'', [
-            $this->prefix.'created_at' => 't><'.$now->timestamp.','.$then->timestamp,
-        ]);
+        $this->assertQuery('select * where "created_at" between \''.$now->toDateTimeString().'\' and \''.$then->toDateTimeString().'\'',
+            [
+                $this->prefix.'created_at' => 't><'.$now->timestamp.','.$then->timestamp,
+            ]);
 
-        $this->assertQuery('select * where "created_at" between \''.$now->toDateTimeString().'\' and \''.$then->toDateTimeString().'\'', [
-            $this->prefix.'created_at' => 't><'.$then->timestamp.','.$now->timestamp,
-        ]);
+        $this->assertQuery('select * where "created_at" between \''.$now->toDateTimeString().'\' and \''.$then->toDateTimeString().'\'',
+            [
+                $this->prefix.'created_at' => 't><'.$then->timestamp.','.$now->timestamp,
+            ]);
     }
 
 
     function test_generic_filter_timestamp_not_between()
     {
-        $now    = Carbon::now();
-        $then   = Carbon::now()->addDay();
+        $now  = Carbon::now();
+        $then = Carbon::now()->addDay();
 
-        $this->assertQuery('select * where "created_at" not between \''.$now->toDateTimeString().'\' and \''.$then->toDateTimeString().'\'', [
-            $this->prefix.'created_at' => 't!><'.$now->timestamp.','.$then->timestamp,
-        ]);
+        $this->assertQuery('select * where "created_at" not between \''.$now->toDateTimeString().'\' and \''.$then->toDateTimeString().'\'',
+            [
+                $this->prefix.'created_at' => 't!><'.$now->timestamp.','.$then->timestamp,
+            ]);
 
-        $this->assertQuery('select * where "created_at" not between \''.$now->toDateTimeString().'\' and \''.$then->toDateTimeString().'\'', [
-            $this->prefix.'created_at' => 't!><'.$then->timestamp.','.$now->timestamp,
-        ]);
+        $this->assertQuery('select * where "created_at" not between \''.$now->toDateTimeString().'\' and \''.$then->toDateTimeString().'\'',
+            [
+                $this->prefix.'created_at' => 't!><'.$then->timestamp.','.$now->timestamp,
+            ]);
     }
 
 
     private function assertQuery($expectedQuery, $params)
     {
-        $filter = $this->buildFilter(http_build_query($params));
+        $filter = $this->buildGenericFilter(UserFilter::class, http_build_query($params));
         $this->assertEquals($expectedQuery, $this->dumpQuery($filter->apply($this->builder)));
         $this->resetBuilder();
     }

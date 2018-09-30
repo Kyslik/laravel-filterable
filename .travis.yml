@@ -8,7 +8,6 @@ git:
   depth: 3
 
 env:
-  - version=L55
   - version=L56
   - version=L57
 
@@ -24,7 +23,6 @@ before_install:
 
 install:
   - travis_retry composer install --no-interaction --prefer-dist --no-suggest;
-  - if [[ $version = 'L55' ]]; then travis_retry composer require --dev --update-with-dependencies --no-suggest --no-interaction orchestra/testbench:"3.5.*" phpunit/phpunit:"^6.0"; fi
   - if [[ $version = 'L56' ]]; then travis_retry composer require --dev --update-with-dependencies --no-suggest --no-interaction orchestra/testbench:"3.6.*" phpunit/phpunit:"^7.0"; fi
   - if [[ $version = 'L57' ]]; then travis_retry composer require --dev --update-with-dependencies --no-suggest --no-interaction orchestra/testbench:"3.7.*" phpunit/phpunit:"^7.0"; fi
 
@@ -33,5 +31,3 @@ script: vendor/bin/phpunit
 branches:
   only:
     - master
-    - L5.5-6
-    - L5.5-7

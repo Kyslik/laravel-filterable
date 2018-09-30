@@ -10,17 +10,6 @@ class RoleFilter extends Filter
 
     use JoinSupport;
 
-    protected $filterables = [
-        'id',
-        'user_id',
-        'role',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'active',
-        'published',
-    ];
-
 
     function filterMap(): array
     {
@@ -32,7 +21,6 @@ class RoleFilter extends Filter
             'permission'           => ['permission'],
             'permissionType'       => ['permission-type'],
             'permissionTypeActive' => ['permission-type-active'],
-
         ];
     }
 

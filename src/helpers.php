@@ -15,3 +15,27 @@ if ( ! function_exists('remove_prefix')) {
         return $check ? str_replace_first($prefix, '', $subject) : substr($subject, strlen($prefix));
     }
 }
+
+if ( ! function_exists('force_assoc_array')) {
+    /**
+     * Transforms array to be associative.
+     *
+     * @param array $array
+     * @param null  $empty
+     *
+     * @return array
+     */
+    function force_assoc_array(array $array, $empty = null)
+    {
+        $new = [];
+        foreach ($array as $key => $value) {
+            if (is_numeric($key)) {
+                $new[$value] = $empty;
+            } else {
+                $new[$key] = $value;
+            }
+        }
+
+        return $new;
+    }
+}

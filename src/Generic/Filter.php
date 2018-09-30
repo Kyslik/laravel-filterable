@@ -15,6 +15,8 @@ abstract class Filter extends BaseFilter
 
     protected $filterables = [];
 
+    protected $prefixedFilterables = [];
+
     /**
      * @var string
      * */
@@ -74,6 +76,25 @@ abstract class Filter extends BaseFilter
         $this->settings();
         $this->determineGroupingOperator();
         $this->loadFilterTypes(config('filterable.filter_types', []));
+        $this->prefixFilterables();
+    }
+
+
+    /**
+     * @param string $defaultFilterType
+     */
+    public function setDefaultFilterType($defaultFilterType)
+    {
+        $this->defaultFilterType = $defaultFilterType;
+    }
+
+
+    /**
+     * @param string $prefix
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
     }
 
 
@@ -94,27 +115,21 @@ abstract class Filter extends BaseFilter
     }
 
 
+    /**
+     * @inheritdoc
+     */
+    public function availableFilters(): array
+    {
+        return array_merge($this->prefixedFilterables, parent::availableFilters());
+    }
+
+
+    /**
+     * @inheritdoc
+     */
     public function filterMap(): array
     {
         return [];
-    }
-
-
-    /**
-     * @param string $defaultFilterType
-     */
-    public function setDefaultFilterType($defaultFilterType)
-    {
-        $this->defaultFilterType = $defaultFilterType;
-    }
-
-
-    /**
-     * @param string $prefix
-     */
-    public function setPrefix($prefix)
-    {
-        $this->prefix = $prefix;
     }
 
 
@@ -193,6 +208,14 @@ abstract class Filter extends BaseFilter
     }
 
 
+    protected function prefixFilterables()
+    {
+        $this->prefixedFilterables = array_map(function ($value) {
+            return $this->prefix.$value;
+        }, $this->filterables);
+    }
+
+
     private function loadFilterTypes($configuration)
     {
         $types = [];
@@ -263,9 +286,7 @@ abstract class Filter extends BaseFilter
     private function filters()
     {
         // Grab all data from query strings that start with the prefix $this->prefix.
-        $data = $this->request->only(array_map(function ($value) {
-            return $this->prefix.$value;
-        }, $this->filterables));
+        $data = $this->request->only($this->prefixedFilterables);
 
         // Get rid of empty values.
         $data = array_filter($data, 'strlen');

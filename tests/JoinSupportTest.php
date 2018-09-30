@@ -2,7 +2,9 @@
 
 namespace Kyslik\LaravelFilterable\Test;
 
-class JoinTest extends TestCase
+use Kyslik\LaravelFilterable\Test\Stubs\RoleFilter;
+
+class JoinSupportTest extends TestCase
 {
 
     function test_single_join()
@@ -63,7 +65,7 @@ class JoinTest extends TestCase
 
     private function assertJoinQuery($expectedQuery, $builderQuery)
     {
-        $filter = $this->buildCustomFilter(http_build_query($builderQuery));
+        $filter = $this->buildFilter(RoleFilter::class, http_build_query($builderQuery));
         $this->assertEquals($expectedQuery, $this->dumpQuery($filter->apply($this->builder)));
         $this->resetBuilder();
     }
