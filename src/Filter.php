@@ -3,7 +3,6 @@
 namespace Kyslik\LaravelFilterable;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException;
 use Kyslik\LaravelFilterable\Exceptions\MissingBuilderInstance;
@@ -67,7 +66,7 @@ abstract class Filter implements FilterContract
             $appends = $this->appendableDefaults($defaults);
 
             if ( ! empty($appends)) {
-                throw new HttpResponseException(redirect($this->request->fullUrlWithQuery($appends), $code));
+                abort(redirect($this->request->fullUrlWithQuery($appends), $code));
             }
         }
     }
