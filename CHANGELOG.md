@@ -2,6 +2,25 @@
 
 All notable changes to `kyslik/laravel-filterable` will be documented in this file
 
+## 2.0.1 - 2018-10-05
+
+### Added
+
+- partial route support (see [#11](https://github.com/Kyslik/laravel-filterable/issues/11)): 
+  - `toggle`, `add`, `merge`, `remove`, `truncate` 
+    - generates urls with *proper* query-strings
+  - `hasAny`, `hasAll` (alias `has`)
+    - returns `bool`
+    
+### Fixes
+
+- composer.json - drop support for Laravel 5.5
+    
+### Improved
+
+- test suite
+
+
 ## 2.0.0 - 2018-10-01
 
 ### Added
