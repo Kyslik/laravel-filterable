@@ -32,7 +32,8 @@ if ( ! function_exists('force_assoc_array')) {
             if (is_numeric($key)) {
                 $new[$value] = $empty;
             } else {
-                $new[$key] = $value;
+                // ?? $empty, if we want to make null -> ''
+                $new[$key] = $value ?? $empty;
             }
         }
 
