@@ -2,6 +2,12 @@
 
 All notable changes to `kyslik/laravel-filterable` will be documented in this file
 
+## 2.0.2 - 2018-10-05
+
+## Fixed
+
+- an unreported bug with `Request::fullUrlWithNiceQuery([])`
+
 ## 2.0.1 - 2018-10-05
 
 ### Added
