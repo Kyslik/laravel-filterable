@@ -11,6 +11,9 @@ All notable changes to `kyslik/laravel-filterable` will be documented in this fi
     - generates urls with *proper* query-strings
   - `hasAny`, `hasAll` (alias `has`)
     - returns `bool`
+- macros
+  - `Request::fullUrlWithNiceQuery`
+  - `Arr::query` which is missing in Laravel 5.6
     
 ### Fixes
 
