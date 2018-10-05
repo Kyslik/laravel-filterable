@@ -3,6 +3,7 @@
 namespace Kyslik\LaravelFilterable;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException;
 
@@ -53,6 +54,11 @@ class FilterableServiceProvider extends ServiceProvider
         Request::macro('fullUrlWithNiceQuery', function (array $query) {
             /** @var Request $this */
             return rtrim(str_replace('=&', '&', $this->fullUrlWithQuery(force_assoc_array($query, ''))), '=');
+        });
+
+        // For L5.6
+        Arr::macro('query', function (array $query) {
+            return http_build_query($query, null, '&', PHP_QUERY_RFC3986);
         });
     }
 }
