@@ -42,11 +42,13 @@ class RouteSupport
     {
         $filters = $this->applicableFilters($filters);
 
+        $request = clone $this->request;
+
         if (empty($filters)) {
-            return $this->request->fullUrl();
+            return $request->fullUrl();
         }
 
-        $queryBag = $this->request->query;
+        $queryBag = $request->query;
         // Toggle OFF, whatever stays in $filters is toggled ON.
         foreach (array_keys($filters) as $filter) {
             if ($queryBag->has($filter)) {
@@ -55,7 +57,7 @@ class RouteSupport
             }
         }
 
-        return $this->request->fullUrlWithNiceQuery(array_merge($queryBag->all(), $filters));
+        return $request->fullUrlWithNiceQuery(array_merge($queryBag->all(), $filters));
     }
 
 
@@ -68,13 +70,15 @@ class RouteSupport
     {
         $filters = force_assoc_array($this->filter->availableFilters());
 
-        $queryBag = $this->request->query;
+        $request = clone $this->request;
+
+        $queryBag = $request->query;
 
         foreach (array_keys($filters) as $filter) {
             $queryBag->remove($filter);
         }
 
-        return $this->request->fullUrlWithNiceQuery($queryBag->all());
+        return $request->fullUrlWithNiceQuery($queryBag->all());
     }
 
 
@@ -89,17 +93,19 @@ class RouteSupport
     {
         $filters = $this->applicableFilters($filters);
 
+        $request = clone $this->request;
+
         if (empty($filters)) {
-            return $this->request->fullUrl();
+            return $request->fullUrl();
         }
 
-        $queryBag = $this->request->query;
+        $queryBag = $request->query;
 
         foreach (array_keys($filters) as $filter) {
             $queryBag->remove($filter);
         }
 
-        return $this->request->fullUrlWithNiceQuery($queryBag->all());
+        return $request->fullUrlWithNiceQuery($queryBag->all());
     }
 
 
@@ -114,12 +120,13 @@ class RouteSupport
     public function add($filters, bool $overwrite = false): string
     {
         $filters = $this->applicableFilters($filters);
+        $request = clone $this->request;
 
         if (empty($filters)) {
-            return $this->request->fullUrl();
+            return $request->fullUrl();
         }
 
-        $queryBag = $this->request->query;
+        $queryBag = $request->query;
 
         foreach (array_keys($filters) as $filter) {
             if ($queryBag->has($filter) && ! $overwrite) {
@@ -127,7 +134,7 @@ class RouteSupport
             }
         }
 
-        return $this->request->fullUrlWithNiceQuery(array_merge($queryBag->all(), $filters));
+        return $request->fullUrlWithNiceQuery(array_merge($queryBag->all(), $filters));
     }
 
 

@@ -53,8 +53,10 @@ class FilterableServiceProvider extends ServiceProvider
 
         Request::macro('fullUrlWithNiceQuery', function (array $query) {
             /** @var Request $this */
+            $question = $this->getBaseUrl().$this->getPathInfo() == '/' ? '/?' : '?';
+            
             return empty($query) ? $this->url() :
-                rtrim(str_replace('=&', '&', $this->fullUrlWithQuery(force_assoc_array($query, ''))), '=');
+                rtrim(str_replace('=&', '&', $this->url().$question.Arr::query((force_assoc_array($query, '')))), '=');
         });
 
         // For L5.6

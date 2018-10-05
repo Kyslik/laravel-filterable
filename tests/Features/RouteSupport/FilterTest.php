@@ -2,6 +2,7 @@
 
 namespace Kyslik\LaravelFilterable\Test\Features\RouteSupport;
 
+use Illuminate\Http\Request;
 use Kyslik\LaravelFilterable\Test\Stubs\Filter;
 use Kyslik\LaravelFilterable\Test\TestCase;
 
@@ -24,6 +25,7 @@ class FilterTest extends TestCase
         /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
         $support = $this->getSupportClass(Filter::class);
         $this->assertEquals('http://test.dev/?new', $support->toggle(['new']));
+        $this->assertEquals('http://test.dev/?new', $support->toggle(['new']));
     }
 
 
@@ -32,24 +34,37 @@ class FilterTest extends TestCase
         /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
         $support = $this->getSupportClass(Filter::class, 'new');
         $this->assertEquals('http://test.dev', $support->toggle(['new']));
+        $this->assertEquals('http://test.dev', $support->toggle(['new']));
+    }
+
+    function test_toggle_in_a_row()
+    {
+        /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
+        $support = $this->getSupportClass(Filter::class, 'new');
+        $this->assertEquals('http://test.dev', $support->toggle(['new']));
+        $this->assertEquals('http://test.dev', $support->toggle(['new']));
+        $this->assertEquals('http://test.dev/?fake', $support->toggle(['new', 'fake']));
+        $this->assertEquals('http://test.dev/?fake', $support->toggle(['fake', 'new']));
     }
 
 
     function test_toggle_on()
     {
         /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
-        $support = $this->getSupportClass(Filter::class, 'page=1');
+        $support = $this->getSupportClass(Filter::class, 'page=1&fake=2');
 
-        $this->assertEquals('http://test.dev/?page=1&new', $support->toggle(['new']));
+        $this->assertEquals('http://test.dev/?page=1&fake=2&new', $support->toggle(['new']));
+        $this->assertEquals('http://test.dev/?page=1&fake=2&new', $support->toggle(['new']));
     }
 
 
     function test_toggle_off()
     {
         /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
-        $support = $this->getSupportClass(Filter::class, 'page=1&new');
+        $support = $this->getSupportClass(Filter::class, 'page=1&new=1&fake');
 
-        $this->assertEquals('http://test.dev/?page=1', $support->toggle(['new']));
+        $this->assertEquals('http://test.dev/?page=1&fake', $support->toggle(['new']));
+        $this->assertEquals('http://test.dev/?page=1&fake', $support->toggle(['new']));
     }
 
 
@@ -59,6 +74,7 @@ class FilterTest extends TestCase
         $support = $this->getSupportClass(Filter::class, 'page=1&random=5&fake=2&disabled');
 
         $this->assertEquals('http://test.dev/?page=1&fake=2&disabled&new=a', $support->toggle(['new' => 'a', 'random']));
+        $this->assertEquals('http://test.dev/?page=1&fake=2', $support->toggle(['disabled', 'random']));
     }
 
 
@@ -67,6 +83,7 @@ class FilterTest extends TestCase
         /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
         $support = $this->getSupportClass(Filter::class, 'page=1&random=5&fake=2&disabled');
 
+        $this->assertEquals('http://test.dev/?page=1', $support->truncate());
         $this->assertEquals('http://test.dev/?page=1', $support->truncate());
     }
 
@@ -77,6 +94,7 @@ class FilterTest extends TestCase
         $support = $this->getSupportClass(Filter::class, 'page=1&random=5&fake=2&disabled');
 
         $this->assertEquals('http://test.dev/?page=1&disabled', $support->remove(['fake', 'random']));
+        $this->assertEquals('http://test.dev/?page=1&random=5', $support->remove(['fake', 'disabled']));
     }
 
 
@@ -86,7 +104,7 @@ class FilterTest extends TestCase
         $support = $this->getSupportClass(Filter::class, 'page=1&random=5');
 
         $this->assertEquals('http://test.dev/?page=1&random=5&fake&disabled', $support->add(['random' => '6', 'fake', 'disabled']));
-    }
+        $this->assertEquals('http://test.dev/?page=1&random=5&disabled', $support->add(['random' => '7', 'disabled']));}
 
 
     function test_merge_filters()
@@ -96,6 +114,9 @@ class FilterTest extends TestCase
 
         $this->assertEquals('http://test.dev/?page=1&random=6&fake&disabled',
             $support->merge(['random' => '6', 'fake', 'disabled']));
+
+        $this->assertEquals('http://test.dev/?page=1&random=8&disabled',
+            $support->merge(['random' => '8', 'disabled']));
     }
 
 
