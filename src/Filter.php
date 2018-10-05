@@ -66,7 +66,7 @@ abstract class Filter implements FilterContract
             $appends = $this->appendableDefaults($defaults);
 
             if ( ! empty($appends)) {
-                abort(redirect($this->request->fullUrlWithQuery($appends), $code));
+                abort(redirect($this->request->fullUrlWithNiceQuery($appends), $code));
             }
         }
     }

@@ -34,6 +34,11 @@ class FilterableServiceProvider extends ServiceProvider
             /** @var Request $this */
             return $this->hasAny($filter->availableFilters());
         });
+
+        Request::macro('fullUrlWithNiceQuery', function (array $query) {
+            /** @var Request $this */
+            return rtrim(str_replace('=&', '&', $this->fullUrlWithQuery(force_assoc_array($query, ''))), '=');
+        });
     }
 
 

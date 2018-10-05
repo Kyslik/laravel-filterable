@@ -41,6 +41,15 @@ class RequestMacrosTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         resolve(Request::class)->hasAnyFilter();
     }
+
+
+    function test_full_url_with_nice_query()
+    {
+        $request = resolve(Request::class)->create('http://test.dev');
+        $url     = $request->fullUrlWithNiceQuery(['a' => 'b', 'c', 'd' => 'e', 'f', 'g', 'h' => 'i', 'j']);
+
+        $this->assertEquals('http://test.dev/?a=b&c&d=e&f&g&h=i&j', $url);
+    }
 }
 
 class RequestMacroFilter extends \Kyslik\LaravelFilterable\Filter
