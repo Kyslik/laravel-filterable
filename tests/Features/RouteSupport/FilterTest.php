@@ -19,6 +19,22 @@ class FilterTest extends TestCase
     }
 
 
+    function test_pure_toggle_on()
+    {
+        /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
+        $support = $this->getSupportClass(Filter::class);
+        $this->assertEquals('http://test.dev/?new', $support->toggle(['new']));
+    }
+
+
+    function test_pure_toggle_off()
+    {
+        /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
+        $support = $this->getSupportClass(Filter::class, 'new');
+        $this->assertEquals('http://test.dev', $support->toggle(['new']));
+    }
+
+
     function test_toggle_on()
     {
         /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
@@ -126,6 +142,7 @@ class FilterTest extends TestCase
 
         $this->assertTrue($support->has(['random']));
     }
+
 
     function test_has_returns_false()
     {
