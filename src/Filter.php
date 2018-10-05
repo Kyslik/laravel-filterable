@@ -33,6 +33,12 @@ abstract class Filter implements FilterContract
     }
 
 
+    public function routeSupport(): RouteSupport
+    {
+        return app()->makeWith(RouteSupport::class, ['request' => $this->request, 'filter' => $this]);
+    }
+
+
     /**
      * @param \Illuminate\Database\Eloquent\Builder $builder
      *

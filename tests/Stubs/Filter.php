@@ -10,6 +10,18 @@ class Filter extends \Kyslik\LaravelFilterable\Filter
         return $this->builder->where('recent', 1);
     }
 
+    function random() {
+        return $this->builder;
+    }
+
+    function fake() {
+        return $this->builder;
+    }
+
+    function disabled() {
+        return $this->builder;
+    }
+
 
     // For testing purposes only.
     public function appendableDefaults(array $defaults): array
@@ -23,7 +35,7 @@ class Filter extends \Kyslik\LaravelFilterable\Filter
      */
     function filterMap(): array
     {
-        return ['active', 'recent' => ['new', 'scheduled']];
+        return ['active', 'recent' => ['new', 'scheduled'], 'random', 'fake', 'disabled'];
     }
 }
 

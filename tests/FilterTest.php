@@ -26,7 +26,7 @@ class FilterTest extends TestCase
     function test_available_filters()
     {
         $filter = $this->buildFilter(Filter::class);
-        $this->assertEquals(['active', 'new', 'scheduled'], $filter->availableFilters());
+        $this->assertEquals(['active', 'new', 'scheduled', 'random', 'fake', 'disabled'], $filter->availableFilters());
     }
 
 
