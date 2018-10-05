@@ -22,6 +22,21 @@ class FilterableServiceProvider extends ServiceProvider
             $this->commands(FilterMakeCommand::class);
         }
 
+        $this->registerMacros();
+    }
+
+
+    /**
+     * Register the application services.
+     */
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/filterable.php', 'filterable');
+    }
+
+
+    private function registerMacros()
+    {
         Request::macro('hasAnyFilter', function (?FilterContract $filter = null) {
             if (is_null($filter)) {
                 $filter = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 4)[3]['object'] ?? null;
@@ -39,14 +54,5 @@ class FilterableServiceProvider extends ServiceProvider
             /** @var Request $this */
             return rtrim(str_replace('=&', '&', $this->fullUrlWithQuery(force_assoc_array($query, ''))), '=');
         });
-    }
-
-
-    /**
-     * Register the application services.
-     */
-    public function register()
-    {
-        $this->mergeConfigFrom(__DIR__.'/../config/filterable.php', 'filterable');
     }
 }
