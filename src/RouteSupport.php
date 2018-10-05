@@ -47,7 +47,6 @@ class RouteSupport
         }
 
         $queryBag = $this->request->query;
-
         // Toggle OFF, whatever stays in $filters is toggled ON.
         foreach (array_keys($filters) as $filter) {
             if ($queryBag->has($filter)) {

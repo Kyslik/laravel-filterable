@@ -1,17 +1,12 @@
 <?php
 
-namespace Kyslik\LaravelFilterable\Test;
+namespace Kyslik\LaravelFilterable\Test\Features\RouteSupport;
 
 use Kyslik\LaravelFilterable\Test\Stubs\Filter;
+use Kyslik\LaravelFilterable\Test\TestCase;
 
-class RouteSupportTest extends TestCase
+class FilterTest extends TestCase
 {
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
 
     function test_toggle_returns_unmodified_url_if_invalid_argument_passed_in()
     {
@@ -124,7 +119,7 @@ class RouteSupportTest extends TestCase
     }
 
 
-    function test_has()
+    function test_has_returns_true()
     {
         /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
         $support = $this->getSupportClass(Filter::class, 'page=1&random=5&disabled');
@@ -132,11 +127,11 @@ class RouteSupportTest extends TestCase
         $this->assertTrue($support->has(['random']));
     }
 
-
-    private function getSupportClass(string $filter, $requestQuery = '')
+    function test_has_returns_false()
     {
-        $filter = $this->buildFilter($filter, $requestQuery);
+        /** @var \Kyslik\LaravelFilterable\RouteSupport $support */
+        $support = $this->getSupportClass(Filter::class, 'page=1&disabled');
 
-        return $filter->routeSupport();
+        $this->assertFalse($support->has('random'));
     }
 }

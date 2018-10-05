@@ -5,7 +5,6 @@ namespace Kyslik\LaravelFilterable\Test;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Kyslik\LaravelFilterable\FilterableServiceProvider;
-use Kyslik\LaravelFilterable\Generic\Templater;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -43,17 +42,6 @@ abstract class TestCase extends Orchestra
     }
 
 
-    protected function buildGenericFilter(string $filter, $requestQuery = '')
-    {
-
-        /** @var Request $request */
-        $request = resolve(Request::class)->create('http://test.dev?'.$requestQuery);
-        $this->app->instance(Request::class, $request);
-
-        return new $filter($request, resolve(Templater::class));
-    }
-
-
     protected function buildFilter(string $filter, $requestQuery = '')
     {
         /** @var Request $request */
@@ -61,6 +49,14 @@ abstract class TestCase extends Orchestra
         $this->app->instance(Request::class, $request);
 
         return new $filter($request);
+    }
+
+
+    protected function getSupportClass(string $filter, $requestQuery = '')
+    {
+        $filter = $this->buildFilter($filter, $requestQuery);
+
+        return $filter->routeSupport();
     }
 
 

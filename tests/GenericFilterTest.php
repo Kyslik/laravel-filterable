@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Kyslik\LaravelFilterable\Test\Stubs\GenericFilter;
 use Kyslik\LaravelFilterable\Test\Stubs\UserFilter;
 
-class GenericFilterTest extends TestCase
+class GenericFilterTest extends GenericTestCase
 {
 
     private $prefix;
@@ -25,26 +25,30 @@ class GenericFilterTest extends TestCase
         config()->set('filterable.prefix', $this->prefix);
     }
 
+
     function test_appendable_defaults_returns_correct_array()
     {
-        $filter = $this->buildGenericFilter(GenericFilter::class);
+        $filter = $this->buildFilter(GenericFilter::class);
 
         $expected = ['name' => '', 'f-id' => '1'];
         $this->assertEquals($expected, $filter->appendableDefaults(['name', 'f-id' => '1']));
     }
 
+
     function test_available_filters()
     {
-        $filter = $this->buildGenericFilter(GenericFilter::class);
+        $filter = $this->buildFilter(GenericFilter::class);
         $this->assertEquals(['f-id', 'f-name', 'f-created_at', 'name'], $filter->availableFilters());
     }
 
+
     function test_filter_is_applied_once()
     {
-        $filter = $this->buildGenericFilter(GenericFilter::class, 'name=one&name=neo&f-id=1&f-id=2');
+        $filter = $this->buildFilter(GenericFilter::class, 'name=one&name=neo&f-id=1&f-id=2');
         $this->assertEquals('select * where "name" = \'neo\' and "id" = \'2\'', $this->dumpQuery($filter->apply($this->builder)));
         $this->resetBuilder();
     }
+
 
     function test_grouping_operator_is_determined()
     {
@@ -52,7 +56,7 @@ class GenericFilterTest extends TestCase
 
         $anonymous = function ($query, $expected, $default) {
             config()->set('filterable.default_grouping_operator', $default);
-            $filter = $this->buildGenericFilter(UserFilter::class, 'grouping-operator='.$query);
+            $filter = $this->buildFilter(UserFilter::class, 'grouping-operator='.$query);
             $this->assertEquals($filter->getGroupingOperator(), $expected);
         };
 
@@ -349,9 +353,8 @@ class GenericFilterTest extends TestCase
 
     private function assertQuery($expectedQuery, $params)
     {
-        $filter = $this->buildGenericFilter(UserFilter::class, http_build_query($params));
+        $filter = $this->buildFilter(UserFilter::class, http_build_query($params));
         $this->assertEquals($expectedQuery, $this->dumpQuery($filter->apply($this->builder)));
         $this->resetBuilder();
     }
-
 }

@@ -1,17 +1,18 @@
 <?php
 
-namespace Kyslik\LaravelFilterable\Test;
+namespace Kyslik\LaravelFilterable\Test\Features\Defa\Ult;
 
 use Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException;
+use Kyslik\LaravelFilterable\Test\GenericTestCase;
 use Kyslik\LaravelFilterable\Test\Stubs\GenericFilter;
 
-class DefaultGenericFilterTest extends TestCase
+class GenericFilterTest extends GenericTestCase
 {
 
     function test_redirect_happens()
     {
         $this->expectException(\Illuminate\Http\Exceptions\HttpResponseException::class);
-        $filter = $this->buildGenericFilter(GenericFilter::class, 'page=1');
+        $filter = $this->buildFilter(GenericFilter::class, 'page=1');
 
         $filter->default(['filter-id' => '1']);
     }
@@ -19,7 +20,7 @@ class DefaultGenericFilterTest extends TestCase
 
     function test_redirect_does_not_happen()
     {
-        $filter = $this->buildGenericFilter(GenericFilter::class, 'filter-name=~neo');
+        $filter = $this->buildFilter(GenericFilter::class, 'filter-name=~neo');
 
         $filter->default(['created_at' => now()]);
 
@@ -29,24 +30,25 @@ class DefaultGenericFilterTest extends TestCase
 
     function test_applied_prevents_redirect()
     {
-        $filter = $this->buildGenericFilter(GenericFilter::class, 'filter-name=~neo');
+        $filter = $this->buildFilter(GenericFilter::class, 'filter-name=~neo');
         $filter->default(['filter-name' => '~tank']);
 
         $this->assertTrue(true, 'We are testing, that \Illuminate\Http\Exceptions\HttpResponseException is not thrown.');
     }
 
+
     function test_appendable_defaults_throws_up()
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $filter = $this->buildGenericFilter(GenericFilter::class);
-        $filter->default(['joe']);
+        $filter = $this->buildFilter(GenericFilter::class);
+        $filter->default(['neo']);
     }
 
 
     function test_defaults_redirect_with_correct_query()
     {
-        $filter = $this->buildGenericFilter(GenericFilter::class);
+        $filter = $this->buildFilter(GenericFilter::class);
 
         try {
             $code = 307;

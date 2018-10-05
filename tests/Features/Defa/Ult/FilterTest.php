@@ -1,11 +1,12 @@
 <?php
 
-namespace Kyslik\LaravelFilterable\Test;
+namespace Kyslik\LaravelFilterable\Test\Features\Defa\Ult;
 
 use Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException;
 use Kyslik\LaravelFilterable\Filter;
+use Kyslik\LaravelFilterable\Test\TestCase;
 
-class DefaultFilterTest extends TestCase
+class FilterTest extends TestCase
 {
 
     function test_redirect_happens()
