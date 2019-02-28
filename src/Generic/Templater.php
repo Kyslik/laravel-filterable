@@ -3,6 +3,7 @@
 namespace Kyslik\LaravelFilterable\Generic;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Arr;
 use Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException;
 
 class Templater
@@ -67,7 +68,7 @@ class Templater
         $range = explode(',', $value);
 
         if (count($range) == 2) {
-            return array_sort(array_map([$this, 'timestamp'], $range), null);
+            return Arr::sort(array_map([$this, 'timestamp'], $range), null);
         }
 
         throw new InvalidArgumentException('Provide exactly two timestamps.');
@@ -103,7 +104,7 @@ class Templater
         }
 
         if (max($range) == min($range)) {
-            return array_sort(['0', max($range)], null);
+            return Arr::sort(['0', max($range)], null);
         }
 
         return [min($range), max($range)];

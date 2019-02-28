@@ -4,6 +4,7 @@ namespace Kyslik\LaravelFilterable;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException;
 use Kyslik\LaravelFilterable\Exceptions\MissingBuilderInstance;
 
@@ -56,7 +57,7 @@ abstract class Filter implements FilterContract
      */
     public function availableFilters(): array
     {
-        return array_flatten($this->filterMap);
+        return Arr::flatten($this->filterMap);
     }
 
 
