@@ -8,12 +8,6 @@ use Kyslik\LaravelFilterable\Test\Stubs\Filter;
 class FilterTest extends TestCase
 {
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-
     function test_appendable_defaults_returns_correct_array()
     {
         $filter = $this->buildFilter(Filter::class);

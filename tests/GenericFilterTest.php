@@ -19,7 +19,7 @@ class GenericFilterTest extends GenericTestCase
     }
 
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         config()->set('filterable.prefix', $this->prefix);
