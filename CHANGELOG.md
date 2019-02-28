@@ -2,11 +2,26 @@
 
 All notable changes to `kyslik/laravel-filterable` will be documented in this file
 
+## 2.0.2 - 2019-02-28
+
+### Added
+
+- support for Laravel 5.8
+  
+### Improved
+
+- TravisCI configuration
+
+### Removed
+
+- dependency on Laravel helpers (`laravel/helpers`)
+  - now using `Illuminate\Support\Arr::` / `Illuminate\Support\Str::` instead
+
 ## 2.0.1 - 2018-10-05
 
 ### Added
 
-- partial route support (see [#11](https://github.com/Kyslik/laravel-filterable/issues/11)): 
+- partial route support (see [#11](https://github.com/Kyslik/laravel-filterable/issues/11)):
   - `toggle`, `add`, `merge`, `remove`, `truncate` 
     - generates urls with *proper* query-strings
   - `hasAny`, `hasAll` (alias `has`)
@@ -14,15 +29,14 @@ All notable changes to `kyslik/laravel-filterable` will be documented in this fi
 - macros
   - `Request::fullUrlWithNiceQuery`
   - `Arr::query` which is missing in Laravel 5.6
-    
+
 ### Fixes
 
 - composer.json - drop support for Laravel 5.5
-    
+
 ### Improved
 
 - test suite
-
 
 ## 2.0.0 - 2018-10-01
 

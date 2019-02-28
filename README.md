@@ -24,7 +24,7 @@ Package lets you to create && apply two kinds of filters **custom** and **generi
 
 ### Custom filters
 
-**Custom** filters are just like in Jeffrey's video. You define a logic on a builder instance and package applies it via [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes).
+**Custom** filters are just like in Jeffrey's video. You define a logic on a builder instance and package applies it via [local scope](https://laravel.com/docs/5.8/eloquent#local-scopes).
 
 Let's say a product requires displaying recently created records. You create a method `recent($minutes = null)` inside a filter class, which returns Builder instance:
 
@@ -84,7 +84,7 @@ public function recent($minutes = null): \Illuminate\Database\Eloquent\Builder
 
 While using both **custom** or **generic** filters you must:
 
-1. have [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes) on model with the signature `scopeFilter(Builder $query, FILTERNAME $filters)`
+1. have [local scope](https://laravel.com/docs/5.8/eloquent#local-scopes) on model with the signature `scopeFilter(Builder $query, FILTERNAME $filters)`
 2. have particular (`FILTERNAME`) filter class that extends one of:
    - `Kyslik\LaravelFilterable\Generic\Filter` class - allows usage of both **custom** & **generic** filters
    - `Kyslik\LaravelFilterable\Filter` class - allows usage of only **custom** filters
@@ -139,7 +139,7 @@ class UserFilter extends Filter
 
 >**Note**: `filterMap()` shall return an associative array where **key** is a method name and **value** is either alias or array of aliases
 
-Now add a [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
+Now add a [local scope](https://laravel.com/docs/5.8/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
 
 ```php
 use Kyslik\LaravelFilterable\Filterable;
@@ -181,7 +181,7 @@ class UserFilter extends Filter
 }
 ```
 
-Next, you will have to add a [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
+Next, you will have to add a [local scope](https://laravel.com/docs/5.8/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
 
 ```php
 use Kyslik\LaravelFilterable\Filterable;
