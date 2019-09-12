@@ -19,9 +19,9 @@
     ],
     "require": {
         "php": ">=7.1",
-        "illuminate/support": "5.6.*|5.7.*|5.8.*",
-        "illuminate/database": "5.6.*|5.7.*|5.8.*",
-        "illuminate/http": "5.6.*|5.7.*|5.8.*"
+        "illuminate/support": "^6.0",
+        "illuminate/database": "^6.0",
+        "illuminate/http": "^6.0"
     },
     "require-dev": {
         "laravel/framework": "^6.0",
