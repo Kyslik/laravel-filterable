@@ -316,7 +316,7 @@ abstract class Filter extends BaseFilter
         };
 
         foreach ($this->prepareFilters($column) as $prefix => $type) {
-            if (starts_with($value, $prefix)) {
+            if (startsWith($value, $prefix)) {
                 $filters[$column] = $prepareFilter($type, remove_prefix($prefix, $value, false));
                 break;
             }
