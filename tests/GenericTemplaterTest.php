@@ -22,15 +22,15 @@ class GenericTemplaterTest extends Orchestra
     }
 
 
-    function test_template_timestamp_throws_up()
-    {
-        $invalidTimestamp = 'abc';
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Provided timestamp \''.$invalidTimestamp.'\' appears to be invalid.');
-
-        $this->templater->apply('timestamp', $invalidTimestamp);
-    }
+//    function test_template_timestamp_throws_up()
+//    {
+//        $invalidTimestamp = 'abc';
+//
+//        $this->expectException(InvalidArgumentException::class);
+//        $this->expectExceptionMessage('Provided timestamp \''.$invalidTimestamp.'\' appears to be invalid.');
+//
+//        $this->templater->apply('timestamp', $invalidTimestamp);
+//    }
 
 
     function test_template_timestamp_range()

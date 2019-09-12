@@ -4,6 +4,8 @@ namespace Kyslik\LaravelFilterable\Generic;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Kyslik\LaravelFilterable\Exceptions\InvalidSettingsException;
 use Kyslik\LaravelFilterable\Filter as BaseFilter;
 
@@ -316,7 +318,7 @@ abstract class Filter extends BaseFilter
         };
 
         foreach ($this->prepareFilters($column) as $prefix => $type) {
-            if (starts_with($value, $prefix)) {
+            if (Str::startsWith($value, $prefix)) {
                 $filters[$column] = $prepareFilter($type, remove_prefix($prefix, $value, false));
                 break;
             }
@@ -354,10 +356,10 @@ abstract class Filter extends BaseFilter
             // Apply global settings
             if ( ! empty($this->only)) {
                 // Only logic
-                $filterTypes = array_only($filterTypes, $this->only);
+                $filterTypes = Arr::only($filterTypes, $this->only);
             } elseif ( ! empty($this->except)) {
                 // Except logic
-                $filterTypes = array_except($filterTypes, $this->except);
+                $filterTypes = Arr::except($filterTypes, $this->except);
             }
         }
 
