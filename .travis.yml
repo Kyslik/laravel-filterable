@@ -7,9 +7,7 @@ git:
   depth: 3
 
 env:
-  - version=L56
-  - version=L57
-  - version=L58
+  - version=L6
 
 sudo: false
 
@@ -23,10 +21,7 @@ before_install:
 
 install:
   - travis_retry composer install --no-interaction --prefer-dist --no-suggest;
-  - if [[ $version = 'L56' ]]; then travis_retry composer require --dev --update-with-dependencies --no-suggest --no-interaction orchestra/testbench:"3.6.*" laravel/framework:"5.6.*"; fi
-  - if [[ $version = 'L57' ]]; then travis_retry composer require --dev --update-with-dependencies --no-suggest --no-interaction orchestra/testbench:"3.7.*" laravel/framework:"5.7.*"; fi
-  - if [[ $version = 'L58' ]]; then travis_retry composer require --dev --update-with-dependencies --no-suggest --no-interaction orchestra/testbench:"3.8.*" laravel/framework:"5.8.*"; fi
-
+  - if [[ $version = 'L56' ]]; then travis_retry composer require --dev --update-with-dependencies --no-suggest --no-interaction orchestra/testbench:"^4.0" laravel/framework:"^6.0"; fi
 script: vendor/bin/phpunit
 
 branches:
