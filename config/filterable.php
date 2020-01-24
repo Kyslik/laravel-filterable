@@ -56,6 +56,6 @@ return [
 
     'uri_grouping_operator' => 'grouping-operator',
     
-     //The separator used for "in" filters in the querystring
+     // the separator used for "in" filters in the query string
     'in_separator' => ',',
 ];
