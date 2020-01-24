@@ -36,7 +36,7 @@ return [
             '!='  => ['case' => 'where', 'operator' => '!=', 'template' => null],
             '='   => ['case' => 'where', 'operator' => '=', 'template' => null],
         ],
-        // accepts comma separated list
+        // accepts comma separated list, by default
         'in'        => [
             'i='  => ['case' => 'whereIn', 'operator' => null, 'template' => 'where-in'],
             'i=!' => ['case' => 'whereNotIn', 'operator' => null, 'template' => 'where-in'],
@@ -55,4 +55,7 @@ return [
     'default_grouping_operator' => 'and',
 
     'uri_grouping_operator' => 'grouping-operator',
+    
+     //The separator used for "in" filters in the querystring
+    'in_separator' => ',',
 ];
