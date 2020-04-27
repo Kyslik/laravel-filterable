@@ -1,4 +1,6 @@
 composer.lock
 docs
 vendor
+.idea
+.phpunit.result.cache
 

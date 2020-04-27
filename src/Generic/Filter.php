@@ -225,7 +225,10 @@ abstract class Filter extends BaseFilter
             $types += $value;
         }
 
-        array_multisort(array_map('strlen', array_keys($types)), SORT_DESC, $types);
+        $map = array_map('strlen', array_keys($types));
+
+        array_multisort($map, SORT_DESC, $types);
+
         $this->filterTypes = $types;
     }
 
