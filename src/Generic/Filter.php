@@ -226,7 +226,6 @@ abstract class Filter extends BaseFilter
         }
 
         $map = array_map('strlen', array_keys($types));
-
         array_multisort($map, SORT_DESC, $types);
 
         $this->filterTypes = $types;
