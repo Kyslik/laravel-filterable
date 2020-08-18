@@ -13,7 +13,8 @@ You can install the package via composer:
 ```bash
 composer require kyslik/laravel-filterable
 ```
-if you are using laravel 7:  
+
+If you are using Laravel 7:  
 
 ```bash
 composer require kyslik/laravel-filterable dev-L7
