@@ -114,6 +114,6 @@ class Templater
 
     protected function whereIn($value)
     {
-        return explode(',', $value);
+        return explode(config('filterable.in_separator', ','), $value);
     }
 }
