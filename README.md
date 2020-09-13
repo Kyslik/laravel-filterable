@@ -14,6 +14,12 @@ You can install the package via composer:
 composer require kyslik/laravel-filterable
 ```
 
+If you are using Laravel 7:  
+
+```bash
+composer require kyslik/laravel-filterable dev-L7
+```
+
 Laravel will discover the package by itself. If you feel old-school, disable auto-discovery and add `Kyslik\LaravelFilterable\FilterableServiceProvider::class` to the providers array in your `config/app.php`.
 
 You may continue by publishing [configuration](./config/filterable.php) by issuing following artisan command `php artisan vendor:publish`.

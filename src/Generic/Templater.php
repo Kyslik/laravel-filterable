@@ -4,6 +4,7 @@ namespace Kyslik\LaravelFilterable\Generic;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Kyslik\LaravelFilterable\Exceptions\InvalidArgumentException;
 
 class Templater
@@ -33,8 +34,8 @@ class Templater
     {
         if (is_null($template)) {
             return $value;
-        } elseif (method_exists($this, camel_case($template))) {
-            return $this->{camel_case($template)}($value);
+        } elseif (method_exists($this, Str::camel($template))) {
+            return $this->{Str::camel($template)}($value);
         } else {
             return str_replace('?', $value, $template);
         }
@@ -113,6 +114,6 @@ class Templater
 
     protected function whereIn($value)
     {
-        return explode(',', $value);
+        return explode(config('filterable.in_separator', ','), $value);
     }
 }
