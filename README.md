@@ -1,7 +1,7 @@
 # Laravel Filterable
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/Kyslik/laravel-filterable.svg?style=flat-square)](https://packagist.org/packages/kyslik/laravel-filterable)
-[![Build Status](https://img.shields.io/travis/Kyslik/laravel-filterable/master.svg?style=flat-square)](https://travis-ci.org/Kyslik/laravel-filterable)
+[![Tests](https://github.com/Kyslik/laravel-filterable/actions/workflows/tests.yml/badge.svg)](https://github.com/Kyslik/laravel-filterable/actions/workflows/tests.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/kyslik/laravel-filterable.svg?style=flat-square)](https://packagist.org/packages/kyslik/laravel-filterable)
 
 This package allows you to easily handle database filtering through query strings. The idea is taken from one of the [Jeffrey's videos (behind the paywall)](https://laracasts.com/series/eloquent-techniques/episodes/4). One quick example might look like this: `/users?filter-username=~joe` will result in SQL query `select * from users where "username" like '%joe%'`.

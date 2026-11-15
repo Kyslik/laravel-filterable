@@ -40,7 +40,12 @@ class FilterableServiceProvider extends ServiceProvider
     {
         Request::macro('hasAnyFilter', function (?FilterContract $filter = null) {
             if (is_null($filter)) {
-                $filter = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 4)[3]['object'] ?? null;
+                foreach (debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 6) as $frame) {
+                    if (($frame['object'] ?? null) instanceof FilterContract) {
+                        $filter = $frame['object'];
+                        break;
+                    }
+                }
             }
 
             if ( ! $filter instanceof FilterContract) {
@@ -59,9 +64,10 @@ class FilterableServiceProvider extends ServiceProvider
                 rtrim(str_replace('=&', '&', $this->url().$question.Arr::query((force_assoc_array($query, '')))), '=');
         });
 
-        // For L5.6
-        Arr::macro('query', function (array $query) {
-            return http_build_query($query, null, '&', PHP_QUERY_RFC3986);
-        });
+        if ( ! method_exists(Arr::class, 'query')) {
+            Arr::macro('query', function (array $query) {
+                return http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+            });
+        }
     }
 }

@@ -50,9 +50,19 @@ class Templater
      */
     protected function timestamp($value)
     {
+        if (is_bool($value)) {
+            throw new InvalidArgumentException('Provided timestamp \''.$value.'\' appears to be invalid.');
+        }
+
+        $timestamp = filter_var($value, FILTER_VALIDATE_INT);
+
+        if ($timestamp === false) {
+            throw new InvalidArgumentException('Provided timestamp \''.$value.'\' appears to be invalid.');
+        }
+
         try {
-            return $this->carbon->timestamp($value)->toDateTimeString();
-        } catch (\Exception $exception) {
+            return $this->carbon->timestamp($timestamp)->toDateTimeString();
+        } catch (\Throwable $exception) {
             throw new InvalidArgumentException('Provided timestamp \''.$value.'\' appears to be invalid.');
         }
     }

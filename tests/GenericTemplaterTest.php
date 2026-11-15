@@ -10,6 +10,13 @@ use Orchestra\Testbench\TestCase as Orchestra;
 class GenericTemplaterTest extends Orchestra
 {
 
+    /**
+     * Compatibility for older Testbench/Laravel combinations that access this static property.
+     *
+     * @var \Illuminate\Testing\TestResponse|null
+     */
+    public static $latestResponse;
+
     /** @var  $templater Templater */
     protected $templater;
 
@@ -22,15 +29,15 @@ class GenericTemplaterTest extends Orchestra
     }
 
 
-//    function test_template_timestamp_throws_up()
-//    {
-//        $invalidTimestamp = 'abc';
-//
-//        $this->expectException(InvalidArgumentException::class);
-//        $this->expectExceptionMessage('Provided timestamp \''.$invalidTimestamp.'\' appears to be invalid.');
-//
-//        $this->templater->apply('timestamp', $invalidTimestamp);
-//    }
+    function test_template_timestamp_throws_up()
+    {
+        $invalidTimestamp = 'abc';
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Provided timestamp \''.$invalidTimestamp.'\' appears to be invalid.');
+
+        $this->templater->apply('timestamp', $invalidTimestamp);
+    }
 
 
     function test_template_timestamp_range()

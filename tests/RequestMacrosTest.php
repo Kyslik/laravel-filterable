@@ -36,10 +36,31 @@ class RequestMacrosTest extends TestCase
     }
 
 
+    function test_has_any_filter_determines_the_filter_via_facade()
+    {
+        $filter = $this->buildFilter(MacroCallingFilter::class, 'active&new');
+        $this->app->instance('request', resolve(Request::class));
+        \Illuminate\Support\Facades\Request::clearResolvedInstance('request');
+        $this->assertTrue($filter->callHasAnyFilterViaFacade());
+
+        $filterWithoutMatch = $this->buildFilter(MacroCallingFilter::class, 'page=1');
+        $this->app->instance('request', resolve(Request::class));
+        \Illuminate\Support\Facades\Request::clearResolvedInstance('request');
+        $this->assertFalse($filterWithoutMatch->callHasAnyFilterViaFacade());
+    }
+
+
     function test_has_any_filter_throws_up_when_filter_is_not_provided()
     {
         $this->expectException(InvalidArgumentException::class);
         resolve(Request::class)->hasAnyFilter();
+    }
+
+
+    function test_has_any_filter_throws_up_when_called_via_facade_outside_filter()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        \Illuminate\Support\Facades\Request::hasAnyFilter();
     }
 
 
@@ -83,5 +104,11 @@ class MacroCallingFilter extends RequestMacroFilter
     public function callHasAnyFilter()
     {
         return $this->request->hasAnyFilter();
+    }
+
+
+    public function callHasAnyFilterViaFacade()
+    {
+        return \Illuminate\Support\Facades\Request::hasAnyFilter();
     }
 }

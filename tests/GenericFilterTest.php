@@ -9,14 +9,7 @@ use Kyslik\LaravelFilterable\Test\Stubs\UserFilter;
 class GenericFilterTest extends GenericTestCase
 {
 
-    private $prefix;
-
-
-    public function __construct($name = null, array $data = [], $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-        $this->prefix = 'f-';
-    }
+    private $prefix = 'f-';
 
 
     public function setUp(): void
@@ -351,10 +344,46 @@ class GenericFilterTest extends GenericTestCase
     }
 
 
+    function test_generic_filter_ignores_empty_query_values()
+    {
+        $filter = $this->buildFilter(UserFilter::class, $this->prefix.'username=&'.$this->prefix.'email');
+        $this->assertEquals('select *', $this->dumpQuery($filter->apply($this->builder)));
+        $this->resetBuilder();
+    }
+
+
+    function test_generic_filter_column_specific_only_and_except()
+    {
+        $filter = $this->buildFilter(ColumnSpecificSettingsFilter::class, http_build_query([
+            $this->prefix.'username' => '~joe',
+            $this->prefix.'email'    => '~joe@acme.com',
+        ]));
+
+        $this->assertEquals(
+            'select * where "username" like \'%joe%\' and "email" = \'~joe@acme.com\'',
+            $this->dumpQuery($filter->apply($this->builder))
+        );
+        $this->resetBuilder();
+    }
+
+
     private function assertQuery($expectedQuery, $params)
     {
         $filter = $this->buildFilter(UserFilter::class, http_build_query($params));
         $this->assertEquals($expectedQuery, $this->dumpQuery($filter->apply($this->builder)));
         $this->resetBuilder();
+    }
+}
+
+class ColumnSpecificSettingsFilter extends \Kyslik\LaravelFilterable\Generic\Filter
+{
+
+    protected $filterables = ['username', 'email'];
+
+
+    protected function settings()
+    {
+        $this->for(['username'])->only(['=', '~']);
+        $this->for(['email'])->except(['~']);
     }
 }

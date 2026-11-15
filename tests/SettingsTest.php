@@ -9,6 +9,13 @@ use Orchestra\Testbench\TestCase as Orchestra;
 class SettingsTest extends Orchestra
 {
 
+    /**
+     * Compatibility for older Testbench/Laravel combinations that access this static property.
+     *
+     * @var \Illuminate\Testing\TestResponse|null
+     */
+    public static $latestResponse;
+
     function test_calling_only_throws_up()
     {
         $this->expectException(InvalidSettingsException::class);
