@@ -9,15 +9,17 @@ use Illuminate\Support\Str;
 use Kyslik\LaravelFilterable\Exceptions\InvalidSettingsException;
 use Kyslik\LaravelFilterable\Filter as BaseFilter;
 
-/**
- * @property array chainedFor | Used internally in order to cheaply check if we are chaining.
- */
 abstract class Filter extends BaseFilter
 {
 
     protected $filterables = [];
 
     protected $prefixedFilterables = [];
+
+    /**
+     * @var array|null
+     */
+    protected $chainedFor = null;
 
     /**
      * @var string
@@ -255,7 +257,7 @@ abstract class Filter extends BaseFilter
                 $this->for[$filterable] = (isset($this->for[$filterable][$type])) ?
                     [$type => array_unique(array_merge($this->for[$filterable][$type], $filters))] : [$type => $filters];
             }
-            unset($this->chainedFor);
+            $this->chainedFor = null;
         } else {
             $otherType = ($type == 'only') ? 'except' : 'only';
 
@@ -293,7 +295,9 @@ abstract class Filter extends BaseFilter
         $data = $this->request->only($this->prefixedFilterables);
 
         // Get rid of empty values.
-        $data = array_filter($data, 'strlen');
+        $data = array_filter($data, function ($value) {
+            return (is_string($value) || is_numeric($value)) && strlen((string) $value) > 0;
+        });
 
         // Clean up data and remove the prefix 'filter-' from keys.
         foreach ($data as $key => $value) {
@@ -332,8 +336,9 @@ abstract class Filter extends BaseFilter
 
     private function determineGroupingOperator()
     {
-        $this->groupingOperator =
-            strtolower($this->request->get(config('filterable.uri_grouping_operator', 'grouping-operator'), null));
+        $operator = $this->request->get(config('filterable.uri_grouping_operator', 'grouping-operator'));
+
+        $this->groupingOperator = is_string($operator) ? strtolower($operator) : null;
 
         if (is_null($this->groupingOperator) or ! in_array($this->groupingOperator, ['and', 'or'], true)) {
             $this->groupingOperator = config('filterable.default_grouping_operator', 'and');
@@ -353,7 +358,7 @@ abstract class Filter extends BaseFilter
         if (isset($this->for[$column])) {
             // Special care for this particular $column because of settings.
             $method      = key($this->for[$column]);
-            $filterTypes = call_user_func('array_'.$method, $this->filterTypes, $this->for[$column][$method]);
+            $filterTypes = call_user_func([Arr::class, $method], $this->filterTypes, $this->for[$column][$method]);
         } else {
             // Apply global settings
             if ( ! empty($this->only)) {

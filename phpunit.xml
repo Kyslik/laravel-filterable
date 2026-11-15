@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="vendor/autoload.php"
          backupGlobals="false"
-         backupStaticAttributes="false"
          colors="true"
-         verbose="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
@@ -14,11 +9,6 @@
             <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src/</directory>
-        </whitelist>
-    </filter>
     <php>
         <env name="APP_NAME" value="laravel-filterable"/>
         <env name="APP_ENV" value="testing"/>

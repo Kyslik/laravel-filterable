@@ -10,6 +10,13 @@ use Orchestra\Testbench\TestCase as Orchestra;
 abstract class TestCase extends Orchestra
 {
 
+    /**
+     * Compatibility for older Testbench/Laravel combinations that access this static property.
+     *
+     * @var \Illuminate\Testing\TestResponse|null
+     */
+    public static $latestResponse;
+
     /** @var Builder $filter */
     protected $builder;
 
