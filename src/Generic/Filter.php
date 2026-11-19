@@ -3,6 +3,10 @@
 namespace Kyslik\LaravelFilterable\Generic;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -15,6 +19,13 @@ abstract class Filter extends BaseFilter
     protected $filterables = [];
 
     protected $prefixedFilterables = [];
+
+    /**
+     * Maps unprefixed URI filterable key to target Eloquent column or relation.column.
+     *
+     * @var array
+     */
+    protected $filterableMap = [];
 
     /**
      * @var array|null
@@ -77,6 +88,7 @@ abstract class Filter extends BaseFilter
         $this->defaultFilterType = config('filterable.default_type', '=');
         $this->prefix            = config('filterable.prefix', 'filter-');
 
+        $this->buildFilterableMap();
         $this->settings();
         $this->determineGroupingOperator();
         $this->loadFilterTypes(config('filterable.filter_types', []));
@@ -197,26 +209,109 @@ abstract class Filter extends BaseFilter
     /**
      * @return $this
      * @throws \Kyslik\LaravelFilterable\Exceptions\MissingBuilderInstance
+     * @throws \Kyslik\LaravelFilterable\Exceptions\InvalidSettingsException
      */
     protected function applyGenericFilters()
     {
         $this->builderPresent();
 
+        $groupedRelations = [];
+
         foreach ($this->determineGenericFilters() as $column => $filter) {
-            $this->builder = ($filter['case'] == 'where') ?
-                $this->builder->where($column, $filter['operator'], $filter['value'], $this->groupingOperator) :
-                $this->builder->{$filter['case']}($column, $filter['value'], $this->groupingOperator);
+            if (strpos($column, '.') === false) {
+                $this->builder = $this->applyCondition($this->builder, $column, $filter, $this->groupingOperator);
+                continue;
+            }
+
+            $relationPath = Str::beforeLast($column, '.');
+            $relationColumn = Str::afterLast($column, '.');
+
+            $this->assertSupportedRelationChain($this->builder->getModel(), $relationPath);
+
+            if ($this->groupingOperator === 'and') {
+                $groupedRelations[$relationPath][] = [$relationColumn, $filter];
+                continue;
+            }
+
+            $this->builder = $this->builder->has(
+                $relationPath,
+                '>=',
+                1,
+                $this->groupingOperator,
+                function (Builder $query) use ($relationColumn, $filter) {
+                    $this->applyCondition($query, $query->qualifyColumn($relationColumn), $filter, 'and');
+                }
+            );
+        }
+
+        foreach ($groupedRelations as $relationPath => $conditions) {
+            $this->builder = $this->builder->has(
+                $relationPath,
+                '>=',
+                1,
+                'and',
+                function (Builder $query) use ($conditions) {
+                    foreach ($conditions as [$relationColumn, $filter]) {
+                        $this->applyCondition($query, $query->qualifyColumn($relationColumn), $filter, 'and');
+                    }
+                }
+            );
         }
 
         return $this;
     }
 
 
+    protected function applyCondition(Builder $query, string $column, array $filter, string $boolean): Builder
+    {
+        return ($filter['case'] == 'where') ?
+            $query->where($column, $filter['operator'], $filter['value'], $boolean) :
+            $query->{$filter['case']}($column, $filter['value'], $boolean);
+    }
+
+
+    protected function assertSupportedRelationChain(Model $model, string $relationPath): void
+    {
+        $currentModel = $model;
+
+        foreach (explode('.', $relationPath) as $segment) {
+            if ($segment === '' || ! method_exists($currentModel, $segment)) {
+                throw new InvalidSettingsException('Relation \''.$relationPath.'\' is not defined on '.get_class($model).'.');
+            }
+
+            $relation = $currentModel->{$segment}();
+
+            if ( ! ($relation instanceof BelongsTo || $relation instanceof HasOne || $relation instanceof MorphOne)) {
+                throw new InvalidSettingsException(
+                    'Relation \''.$relationPath.'\' must be a 1:1 (HasOne, MorphOne) or BelongsTo relation.'
+                );
+            }
+
+            $currentModel = $relation->getRelated();
+        }
+    }
+
+
+    protected function buildFilterableMap(): void
+    {
+        $this->filterableMap = [];
+
+        foreach ($this->filterables as $alias => $target) {
+            $uriKey = is_string($alias) ? $alias : $target;
+            $this->filterableMap[$uriKey] = $target;
+        }
+    }
+
+
     protected function prefixFilterables()
     {
-        $this->prefixedFilterables = array_map(function ($value) {
-            return $this->prefix.$value;
-        }, $this->filterables);
+        if (empty($this->filterableMap)) {
+            $this->buildFilterableMap();
+        }
+
+        $this->prefixedFilterables = array_values(array_map(function ($uriKey) {
+            return $this->prefix.$uriKey;
+        }, array_keys($this->filterableMap)));
     }
 
 
@@ -250,12 +345,13 @@ abstract class Filter extends BaseFilter
         // Handle special case when we are chaining obj->for(['username'])->except|only([]);
         if (isset($this->chainedFor)) {
             foreach ($this->chainedFor as $filterable) {
-                if ( ! in_array($filterable, $this->filterables)) {
+                $targetColumn = $this->resolveFilterableTarget($filterable);
+                if ($targetColumn === null) {
                     throw new InvalidSettingsException('Filterable \''.$filterable.'\' is not present in $filterables array.');
                 }
                 // If $type exists for particular $filterable we append filters, otherwise we replace.
-                $this->for[$filterable] = (isset($this->for[$filterable][$type])) ?
-                    [$type => array_unique(array_merge($this->for[$filterable][$type], $filters))] : [$type => $filters];
+                $this->for[$targetColumn] = (isset($this->for[$targetColumn][$type])) ?
+                    [$type => array_unique(array_merge($this->for[$targetColumn][$type], $filters))] : [$type => $filters];
             }
             $this->chainedFor = null;
         } else {
@@ -269,6 +365,20 @@ abstract class Filter extends BaseFilter
         }
 
         return true;
+    }
+
+
+    private function resolveFilterableTarget(string $filterable): ?string
+    {
+        if (isset($this->filterableMap[$filterable])) {
+            return $this->filterableMap[$filterable];
+        }
+
+        if (in_array($filterable, $this->filterableMap, true)) {
+            return $filterable;
+        }
+
+        return null;
     }
 
 
@@ -291,20 +401,54 @@ abstract class Filter extends BaseFilter
      */
     private function filters()
     {
-        // Grab all data from query strings that start with the prefix $this->prefix.
-        $data = $this->request->only($this->prefixedFilterables);
+        $rawQuery = $this->rawQueryParameters();
+        $queryBag = $this->request->query->all();
+        $sanitizedData = [];
 
-        // Get rid of empty values.
-        $data = array_filter($data, function ($value) {
-            return (is_string($value) || is_numeric($value)) && strlen((string) $value) > 0;
-        });
+        foreach ($this->filterableMap as $uriKey => $targetColumn) {
+            $prefixed = $this->prefix.$uriKey;
 
-        // Clean up data and remove the prefix 'filter-' from keys.
-        foreach ($data as $key => $value) {
-            $sanitizedData[remove_prefix($this->prefix, $key, false)] = $value;
+            if (strpos($uriKey, '.') === false) {
+                $values = $this->request->only($prefixed);
+                $value = array_key_exists($prefixed, $values) ? $values[$prefixed] : null;
+            } elseif (array_key_exists($prefixed, $rawQuery)) {
+                $value = $rawQuery[$prefixed];
+            } elseif (array_key_exists($prefixed, $queryBag)) {
+                $value = $queryBag[$prefixed];
+            } else {
+                $mangled = str_replace('.', '_', $prefixed);
+                $mangledUriKey = str_replace('.', '_', $uriKey);
+                $value = ( ! isset($this->filterableMap[$mangledUriKey]) && array_key_exists($mangled, $queryBag))
+                    ? $queryBag[$mangled]
+                    : null;
+            }
+
+            if ((is_string($value) || is_numeric($value)) && strlen((string) $value) > 0) {
+                $sanitizedData[$targetColumn] = $value;
+            }
         }
 
-        return $sanitizedData ?? [];
+        return $sanitizedData;
+    }
+
+
+    private function rawQueryParameters(): array
+    {
+        $queryString = (string) $this->request->server->get('QUERY_STRING', '');
+        if ($queryString === '') {
+            return [];
+        }
+
+        $parsed = [];
+        foreach (explode('&', $queryString) as $pair) {
+            if ($pair === '') {
+                continue;
+            }
+            $parts = explode('=', $pair, 2);
+            $parsed[rawurldecode($parts[0])] = isset($parts[1]) ? rawurldecode($parts[1]) : '';
+        }
+
+        return $parsed;
     }
 
 
