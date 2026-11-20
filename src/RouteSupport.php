@@ -51,13 +51,13 @@ class RouteSupport
         $queryBag = $request->query;
         // Toggle OFF, whatever stays in $filters is toggled ON.
         foreach (array_keys($filters) as $filter) {
-            if ($queryBag->has($filter)) {
-                $queryBag->remove($filter);
+            if ($this->queryHasFilter($request, $filter)) {
+                $this->removeFilterFromQuery($request, $filter);
                 unset($filters[$filter]);
             }
         }
 
-        return $request->fullUrlWithNiceQuery(array_merge($queryBag->all(), $filters));
+        return $request->fullUrlWithNiceQuery(array_merge($this->normalizedQueryParameters($request), $filters));
     }
 
 
@@ -72,13 +72,11 @@ class RouteSupport
 
         $request = clone $this->request;
 
-        $queryBag = $request->query;
-
         foreach (array_keys($filters) as $filter) {
-            $queryBag->remove($filter);
+            $this->removeFilterFromQuery($request, $filter);
         }
 
-        return $request->fullUrlWithNiceQuery($queryBag->all());
+        return $request->fullUrlWithNiceQuery($this->normalizedQueryParameters($request));
     }
 
 
@@ -99,13 +97,11 @@ class RouteSupport
             return $request->fullUrl();
         }
 
-        $queryBag = $request->query;
-
         foreach (array_keys($filters) as $filter) {
-            $queryBag->remove($filter);
+            $this->removeFilterFromQuery($request, $filter);
         }
 
-        return $request->fullUrlWithNiceQuery($queryBag->all());
+        return $request->fullUrlWithNiceQuery($this->normalizedQueryParameters($request));
     }
 
 
@@ -126,15 +122,13 @@ class RouteSupport
             return $request->fullUrl();
         }
 
-        $queryBag = $request->query;
-
         foreach (array_keys($filters) as $filter) {
-            if ($queryBag->has($filter) && ! $overwrite) {
+            if ($this->queryHasFilter($request, $filter) && ! $overwrite) {
                 unset($filters[$filter]);
             }
         }
 
-        return $request->fullUrlWithNiceQuery(array_merge($queryBag->all(), $filters));
+        return $request->fullUrlWithNiceQuery(array_merge($this->normalizedQueryParameters($request), $filters));
     }
 
 
@@ -166,10 +160,8 @@ class RouteSupport
             return false;
         }
 
-        $queryBag = $this->request->query;
-
         foreach (array_keys($filters) as $filter) {
-            if ($queryBag->has($filter)) {
+            if ($this->queryHasFilter($this->request, $filter)) {
                 return true;
             }
         }
@@ -193,10 +185,8 @@ class RouteSupport
             return false;
         }
 
-        $queryBag = $this->request->query;
-
         foreach (array_keys($filters) as $filter) {
-            if ( ! $queryBag->has($filter)) {
+            if ( ! $this->queryHasFilter($this->request, $filter)) {
                 return false;
             }
         }
@@ -215,6 +205,76 @@ class RouteSupport
     public function has($filter): bool
     {
         return $this->hasAll($filter);
+    }
+
+
+    private function queryHasFilter(Request $request, string $filter): bool
+    {
+        if ($request->query->has($filter)) {
+            return true;
+        }
+
+        if (strpos($filter, '.') !== false) {
+            $raw = $this->rawQueryKeys($request);
+            if (array_key_exists($filter, $raw)) {
+                return true;
+            }
+
+            return $request->query->has(str_replace('.', '_', $filter));
+        }
+
+        return false;
+    }
+
+
+    private function removeFilterFromQuery(Request $request, string $filter): void
+    {
+        $request->query->remove($filter);
+
+        if (strpos($filter, '.') !== false) {
+            $request->query->remove(str_replace('.', '_', $filter));
+        }
+    }
+
+
+    private function normalizedQueryParameters(Request $request): array
+    {
+        $params = $request->query->all();
+        $raw = $this->rawQueryKeys($request);
+
+        foreach ($this->filter->availableFilters() as $available) {
+            if (strpos($available, '.') === false) {
+                continue;
+            }
+
+            $mangled = str_replace('.', '_', $available);
+            if (array_key_exists($mangled, $params) && (array_key_exists($available, $raw) || ! in_array($mangled, $this->filter->availableFilters(), true))) {
+                $params[$available] = $params[$mangled];
+                unset($params[$mangled]);
+            }
+        }
+
+        return $params;
+    }
+
+
+    private function rawQueryKeys(Request $request): array
+    {
+        $queryString = (string) $request->server->get('QUERY_STRING', '');
+        if ($queryString === '') {
+            return [];
+        }
+
+        $parsed = [];
+        foreach (explode('&', $queryString) as $pair) {
+            if ($pair === '') {
+                continue;
+            }
+            $parts = explode('=', $pair, 2);
+            $parsed[rawurldecode($parts[0])] = isset($parts[1]) ? rawurldecode($parts[1]) : '';
+        }
+
+        return $parsed;
     }
 
 

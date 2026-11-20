@@ -6,18 +6,18 @@
 
 This package allows you to easily handle database filtering through query strings. The idea is taken from one of the [Jeffrey's videos (behind the paywall)](https://laracasts.com/series/eloquent-techniques/episodes/4). One quick example might look like this: `/users?filter-username=~joe` will result in SQL query `select * from users where "username" like '%joe%'`.
 
+## Requirements
+
+| Package version | PHP | Laravel |
+|:---------------:|:---:|:-------:|
+| `^2.1` | `8.1 - 8.4` (CI matrix; `>=7.2` supported) | `9.x - 13.x` (`^6.0` - `^8.0` legacy compatible) |
+
 ## Installation
 
 You can install the package via composer:
 
 ```bash
 composer require kyslik/laravel-filterable
-```
-
-If you are using Laravel 7:  
-
-```bash
-composer require kyslik/laravel-filterable dev-L7
 ```
 
 Laravel will discover the package by itself. If you feel old-school, disable auto-discovery and add `Kyslik\LaravelFilterable\FilterableServiceProvider::class` to the providers array in your `config/app.php`.
@@ -30,7 +30,7 @@ Package lets you to create && apply two kinds of filters **custom** and **generi
 
 ### Custom filters
 
-**Custom** filters are just like in Jeffrey's video. You define a logic on a builder instance and package applies it via [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes).
+**Custom** filters are just like in Jeffrey's video. You define a logic on a builder instance and package applies it via [local scope](https://laravel.com/docs/eloquent#local-scopes).
 
 Let's say a product requires displaying recently created records. You create a method `recent($minutes = null)` inside a filter class, which returns Builder instance:
 
@@ -90,7 +90,7 @@ public function recent($minutes = null): \Illuminate\Database\Eloquent\Builder
 
 While using both **custom** or **generic** filters you must:
 
-1. have [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes) on model with the signature `scopeFilter(Builder $query, FILTERNAME $filters)`
+1. have [local scope](https://laravel.com/docs/eloquent#local-scopes) on model with the signature `scopeFilter(Builder $query, FILTERNAME $filters)`
 2. have particular (`FILTERNAME`) filter class that extends one of:
    - `Kyslik\LaravelFilterable\Generic\Filter` class - allows usage of both **custom** & **generic** filters
    - `Kyslik\LaravelFilterable\Filter` class - allows usage of only **custom** filters
@@ -145,7 +145,7 @@ class UserFilter extends Filter
 
 >**Note**: `filterMap()` shall return an associative array where **key** is a method name and **value** is either alias or array of aliases
 
-Now add a [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
+Now add a [local scope](https://laravel.com/docs/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
 
 ```php
 use Kyslik\LaravelFilterable\Filterable;
@@ -187,7 +187,7 @@ class UserFilter extends Filter
 }
 ```
 
-Next, you will have to add a [local scope](https://laravel.com/docs/5.7/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
+Next, you will have to add a [local scope](https://laravel.com/docs/eloquent#local-scopes) to the `User` model via [Filterable](https://github.com/Kyslik/laravel-filterable/blob/master/src/Filterable.php):
 
 ```php
 use Kyslik\LaravelFilterable\Filterable;
@@ -239,6 +239,44 @@ class UserFilter extends Filter
     }
 }
 ```
+
+#### Relational generic filters (`BelongsTo`, `HasOne`, `MorphOne`)
+
+Generic filters also support dot-notated single-record Eloquent relations (`BelongsTo`, `HasOne`, `MorphOne`, including nested chains) as well as custom query-string aliases:
+
+```php
+<?php
+
+namespace App\Filters;
+
+use Kyslik\LaravelFilterable\Generic\Filter;
+
+class PostFilter extends Filter
+{
+    protected $filterables = [
+        'title',
+        'published',
+        'author.username',            // ?filter-author.username=alice
+        'author-email' => 'author.email', // ?filter-author-email=~@example.com
+        'author.profile.bio',         // nested BelongsTo -> HasOne chain
+    ];
+
+    protected function settings()
+    {
+        $this->for(['author.username'])->only(['=', '~']);
+    }
+}
+```
+
+Examples:
+
+```
+/posts?filter-author.username=alice&filter-published=b=true
+/posts?filter-author-email=~@example.com
+/posts?filter-title=Draft&filter-author.username=alice&grouping-operator=or
+```
+
+> **Note**: In `AND` mode, multiple generic conditions targeting the same relation path are grouped into a single `whereHas` subquery. Defining a plural relation (such as `HasMany`) in `$filterables` throws `Kyslik\LaravelFilterable\Exceptions\InvalidSettingsException`.
 
 ### Additional features
 
