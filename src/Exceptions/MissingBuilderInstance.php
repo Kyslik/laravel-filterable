@@ -15,7 +15,7 @@ class MissingBuilderInstance extends Exception
      * @param int             $code
      * @param \Throwable|null $previous
      */
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    public function __construct($message = "", $code = 0, ?Throwable $previous = null)
     {
         $message = 'Builder instance must be set before applying filters.';
         parent::__construct($message, $code, $previous);

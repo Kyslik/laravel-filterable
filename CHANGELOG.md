@@ -2,6 +2,30 @@
 
 All notable changes to `kyslik/laravel-filterable` will be documented in this file
 
+## 2.2.0 - 2026-11-20
+
+### Added
+
+- Generic relational filter support (`BelongsTo`, `HasOne`, `MorphOne`, nested single-relation chains, and query-key aliases) ([#1](https://github.com/Kyslik/laravel-filterable/issues/1))
+
+### Fixed
+
+- Explicit nullable `$previous` parameter on `MissingBuilderInstance::__construct()` for PHP 8.4 compatibility
+
+### Improved
+
+- Updated `README.md` requirements matrix and relational generic filter documentation
+
+## 2.1.0 - 2026-11-15
+
+### Added
+
+- Support for PHP 8.1 - 8.4 and Laravel 8 - 13 with GitHub Actions matrix ([#29](https://github.com/Kyslik/laravel-filterable/pull/29))
+
+### Fixed
+
+- `Request::hasAnyFilter` macro detection ([#28](https://github.com/Kyslik/laravel-filterable/issues/28))
+
 ## 2.0.1 - 2018-10-05
 
 ### Added

@@ -53,7 +53,18 @@ class FilterableServiceProvider extends ServiceProvider
             }
 
             /** @var Request $this */
-            return $this->hasAny($filter->availableFilters());
+            $available = $filter->availableFilters();
+            if ($this->hasAny($available)) {
+                return true;
+            }
+
+            foreach ($available as $name) {
+                if (strpos($name, '.') !== false && $this->query->has(str_replace('.', '_', $name))) {
+                    return true;
+                }
+            }
+
+            return false;
         });
 
         Request::macro('fullUrlWithNiceQuery', function (array $query) {
